@@ -1,0 +1,2954 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>tECHLAB SCHEMATICS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Fira+Code:wght@300;400;500&display=swap');
+:root {
+  --bg: #030712; --panel: #0d1b2a; --panel2: #112240;
+  --accent: #00d4ff; --accent2: #7c3aed; --wire-on: #00ff88;
+  --danger: #ff3b3b; --warn: #ffbe0b; --text: #e2f4ff;
+  --muted: #4a7a99; --border: #1e3a5f; --grid: #0d1b2a;
+  --glow: 0 0 12px var(--accent); --glow2: 0 0 20px var(--wire-on);
+  --canvas-bg: #020b14; --line-num: #1e3a5f;
+}
+[data-theme="light"] {
+  --bg: #f0f4f8; --panel: #dde8f0; --panel2: #c8d9e8;
+  --accent: #0077aa; --accent2: #6d28d9; --wire-on: #007a3d;
+  --danger: #cc1111; --warn: #c08000; --text: #0d1b2a;
+  --muted: #446688; --border: #a0b8cc; --grid: #d0dce8;
+  --canvas-bg: #e8f0f8;
+}
+[data-theme="retro"] {
+  --bg: #0a0800; --panel: #1a1500; --panel2: #251f00;
+  --accent: #ffcc00; --accent2: #ff6600; --wire-on: #aaff00;
+  --danger: #ff2200; --warn: #ff9900; --text: #ffe080;
+  --muted: #806040; --border: #403010; --grid: #141000;
+  --canvas-bg: #070600;
+}
+[data-theme="neon"] {
+  --bg: #0a000f; --panel: #140020; --panel2: #1e0030;
+  --accent: #ff00ff; --accent2: #00ffff; --wire-on: #ff00aa;
+  --danger: #ff3300; --warn: #ffaa00; --text: #ffccff;
+  --muted: #884488; --border: #330055; --grid: #0f000f;
+  --canvas-bg: #06000c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
+  user-select: none;
+}
+
+
+.header {
+  background: var(--panel); padding: 6px 8px; gap: 4px;
+  display: flex; flex-wrap: nowrap; align-items: center;
+  border-bottom: 2px solid var(--border); z-index: 1000;
+  min-height: 48px; overflow-x: auto; scrollbar-width: none;
+}
+.header::-webkit-scrollbar { display: none; }
+.logo { font-family: 'Share Tech Mono', monospace; color: var(--accent); font-size: 13px; font-weight: bold; padding: 0 10px 0 4px; letter-spacing: 1px; white-space: nowrap; }
+.logo span { color: var(--wire-on); }
+.hgroup { display: flex; gap: 4px; flex-shrink: 0; }
+.btn {
+  background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+  padding: 6px 10px; border-radius: 8px; font-size: 10px; font-weight: 700;
+  font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; cursor: pointer;
+  transition: all 0.15s; white-space: nowrap; min-height: 34px; display: flex; align-items: center; justify-content: center;
+  outline: none;
+}
+.btn:hover { border: 1px solid var(--accent); color: var(--text); background: var(--panel2); }
+.btn.active { background: var(--accent); color: #000; box-shadow: var(--glow); border: 1px solid var(--accent); }
+.btn-danger { background: #3a0000; border: 1px solid var(--danger) !important; color: var(--danger); }
+.btn-ok { background: #003a1a; border: 1px solid var(--wire-on) !important; color: var(--wire-on); }
+.btn-ok:hover { background: #00541f; }
+.sep { width: 1px; height: 28px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
+
+/* ===== WORKSPACE ===== */
+.workspace { flex: 1; display: flex; overflow: hidden; min-height: 0; }
+
+/* ===== LEFT TOOLBAR ===== */
+.toolbar {
+  width: 56px; background: var(--panel); border-right: 2px solid var(--border);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 0; gap: 2px; flex-shrink: 0; overflow-y: auto;
+  scrollbar-width: none;
+}
+.toolbar::-webkit-scrollbar { display: none; }
+.tool-btn {
+  width: 44px; height: 44px; border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 18px; transition: all 0.15s;
+  position: relative; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+}
+.tool-btn:hover { background: var(--panel2); color: var(--text); }
+.tool-btn.active { background: var(--accent); color: #000; box-shadow: var(--glow); }
+.tool-btn[title]:hover::after {
+  content: attr(title);
+  position: absolute; left: 48px; top: 50%; transform: translateY(-50%);
+  background: var(--panel); border: 1px solid var(--accent);
+  color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 9px;
+  padding: 4px 8px; border-radius: 6px; white-space: nowrap; z-index: 9999;
+  box-shadow: var(--glow); pointer-events: none;
+}
+.tool-sep { width: 28px; height: 1px; background: var(--border); margin: 4px 0; flex-shrink: 0; }
+
+/* ===== CANVAS AREA ===== */
+.canvas-area { flex: 1; position: relative; overflow: hidden; background: var(--canvas-bg); }
+canvas#main-canvas { position: absolute; cursor: crosshair; touch-action: none; }
+canvas#grid-canvas { position: absolute; pointer-events: none; }
+
+/* ===== RIGHT PANEL ===== */
+.props-panel {
+  width: 220px; background: var(--panel); border-left: 2px solid var(--border);
+  display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;
+  transition: width 0.2s;
+}
+.props-panel.collapsed { width: 0; border-left: none; }
+.panel-header {
+  padding: 8px 10px; font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  color: var(--muted); border-bottom: 1px solid var(--border);
+  font-family: 'Share Tech Mono', monospace; display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.panel-scroll { flex: 1; overflow-y: auto; padding: 8px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+
+/* Prop rows */
+.prop-group { margin-bottom: 14px; }
+.prop-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; color: var(--muted); font-family: 'Share Tech Mono', monospace; margin-bottom: 6px; }
+.prop-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+.prop-row label { font-size: 10px; color: var(--muted); min-width: 40px; font-family: 'Share Tech Mono', monospace; }
+.prop-input {
+  flex: 1; background: var(--panel2); border: 1px solid var(--border); color: var(--text);
+  padding: 5px 8px; border-radius: 6px; font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; outline: none; min-width: 0;
+}
+.prop-input:focus { border-color: var(--accent); }
+.prop-input[type=color] { padding: 2px; height: 30px; cursor: pointer; }
+.prop-select {
+  flex: 1; background: var(--panel2); border: 1px solid var(--border); color: var(--text);
+  padding: 5px 8px; border-radius: 6px; font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; outline: none; min-width: 0; cursor: pointer;
+}
+.prop-select:focus { border-color: var(--accent); }
+.prop-btn {
+  width: 100%; padding: 7px; background: var(--panel2); border: 1px solid var(--border);
+  color: var(--muted); border-radius: 7px; font-size: 10px; font-family: 'Rajdhani', sans-serif;
+  font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: all 0.15s; margin-bottom: 4px;
+}
+.prop-btn:hover { border-color: var(--accent); color: var(--accent); }
+.prop-btn.danger { border-color: var(--danger); color: var(--danger); }
+.prop-btn.danger:hover { background: #3a0000; }
+
+/* ===== LAYERS PANEL ===== */
+.layers-list { display: flex; flex-direction: column; gap: 2px; }
+.layer-item {
+  display: flex; align-items: center; gap: 6px; padding: 5px 6px;
+  border-radius: 6px; cursor: pointer; font-size: 10px; color: var(--muted);
+  font-family: 'Rajdhani', sans-serif; font-weight: 600; transition: all 0.1s;
+  border: 1px solid transparent;
+}
+.layer-item:hover { background: var(--panel2); color: var(--text); }
+.layer-item.active { border-color: var(--accent); color: var(--accent); }
+.layer-vis { font-size: 10px; cursor: pointer; opacity: 0.5; }
+.layer-vis.on { opacity: 1; color: var(--wire-on); }
+.layer-name { flex: 1; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.layer-lock { font-size: 10px; cursor: pointer; opacity: 0.4; }
+.layer-lock.on { opacity: 1; color: var(--warn); }
+.layer-del { font-size: 10px; cursor: pointer; opacity: 0; color: var(--danger); transition: opacity 0.15s; padding: 0 2px; }
+.layer-item:hover .layer-del { opacity: 0.7; }
+.layer-del:hover { opacity: 1 !important; }
+.layer-rename-input {
+  flex: 1; background: var(--panel2); border: 1px solid var(--accent); color: var(--text);
+  padding: 1px 4px; border-radius: 4px; font-family: 'Rajdhani', sans-serif;
+  font-size: 10px; font-weight: 600; outline: none; min-width: 0;
+}
+
+/* ===== STATUS BAR ===== */
+.status-bar {
+  background: var(--panel); border-top: 1px solid var(--border);
+  padding: 3px 12px; display: flex; gap: 16px; align-items: center;
+  font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--muted);
+  flex-shrink: 0;
+}
+.st-item { display: flex; gap: 4px; align-items: center; }
+.cursor-blink { display: inline-block; width: 7px; height: 12px; background: var(--accent); animation: cblink 1s step-end infinite; vertical-align: middle; margin-right: 4px; }
+@keyframes cblink { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: #000a; z-index: 8000; display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.visible { display: flex; }
+.modal {
+  background: var(--panel); border: 2px solid var(--accent); border-radius: 16px;
+  padding: 24px; min-width: 340px; max-width: 500px; width: 90%;
+  box-shadow: 0 20px 60px #000a, var(--glow);
+}
+.modal h3 { font-family: 'Share Tech Mono', monospace; color: var(--accent); margin-bottom: 16px; font-size: 13px; }
+.modal input, .modal select, .modal textarea {
+  width: 100%; background: var(--panel2); border: 1px solid var(--border);
+  color: var(--text); padding: 10px 12px; border-radius: 8px;
+  font-family: 'Share Tech Mono', monospace; font-size: 12px; margin-bottom: 10px;
+  outline: none; resize: vertical;
+}
+.modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--accent); }
+.modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+.modal-btns button {
+  padding: 8px 20px; border-radius: 8px; border: none; font-weight: 700;
+  font-size: 13px; cursor: pointer; font-family: 'Rajdhani', sans-serif;
+}
+.modal-row { display: flex; gap: 10px; }
+.modal-row > * { flex: 1; }
+
+/* ===== CONTEXT MENU ===== */
+#ctx-menu {
+  position: fixed; background: var(--panel); border: 1px solid var(--border);
+  border-radius: 10px; z-index: 9000; display: none; overflow: hidden; min-width: 180px;
+  box-shadow: 0 8px 30px #000a;
+}
+.ctx-item { padding: 9px 16px; font-size: 12px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.ctx-item:hover { background: var(--panel2); color: var(--accent); }
+.ctx-item .ctx-key { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--muted); }
+.ctx-sep { height: 1px; background: var(--border); margin: 3px 0; }
+
+/* ===== RULERS ===== */
+.ruler-h { position: absolute; top: 0; left: 20px; right: 0; height: 20px; background: var(--panel); border-bottom: 1px solid var(--border); z-index: 10; pointer-events: none; overflow: hidden; }
+.ruler-v { position: absolute; top: 20px; left: 0; width: 20px; bottom: 0; background: var(--panel); border-right: 1px solid var(--border); z-index: 10; pointer-events: none; overflow: hidden; }
+.ruler-corner { position: absolute; top: 0; left: 0; width: 20px; height: 20px; background: var(--panel); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); z-index: 11; }
+canvas#ruler-h-canvas { width: 100%; height: 100%; }
+canvas#ruler-v-canvas { width: 100%; height: 100%; }
+
+/* ===== ZOOM BADGE ===== */
+.zoom-badge {
+  position: absolute; bottom: 12px; right: 12px; z-index: 100;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+  padding: 4px 10px; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent);
+  display: flex; gap: 6px; align-items: center;
+}
+.zoom-badge button { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 0 2px; line-height: 1; }
+.zoom-badge button:hover { color: var(--accent); }
+
+/* ===== LANG SWITCHER ===== */
+.lang-group { display: flex; gap: 2px; flex-shrink: 0; }
+.lang-btn {
+  background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+  padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700;
+  font-family: 'Share Tech Mono', monospace; cursor: pointer;
+  transition: all 0.15s; min-height: 28px; display: flex; align-items: center;
+  letter-spacing: 0.5px; outline: none;
+}
+.lang-btn:hover { border-color: var(--accent); color: var(--text); }
+.lang-btn.active { background: var(--accent2); color: #fff; border-color: var(--accent2); box-shadow: 0 0 8px var(--accent2); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* selection handles */
+.sel-info {
+  position: absolute; pointer-events: none; border: 1.5px dashed var(--accent);
+  box-shadow: 0 0 8px var(--accent); z-index: 50;
+}
+
+/* mini color swatches */
+.color-swatches { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.swatch {
+  width: 20px; height: 20px; border-radius: 4px; cursor: pointer;
+  border: 1px solid var(--border); transition: transform 0.1s;
+}
+.swatch:hover { transform: scale(1.2); border-color: var(--accent); }
+
+/* grid toggle indicator */
+.sim-indicator{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:all .3s}
+.sim-indicator.on{background:var(--wire-on);box-shadow:0 0 8px var(--wire-on);animation:pulse 1s infinite}
+.lib-panel{width:0;background:var(--panel);border-right:2px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .2s}
+.lib-panel.open{width:148px}
+.lib-search{background:var(--panel2);border:none;border-bottom:1px solid var(--border);color:var(--text);padding:5px 8px;font-family:'Share Tech Mono',monospace;font-size:10px;outline:none;width:100%;flex-shrink:0}
+.lib-search::placeholder{color:var(--muted)}
+.lib-scroll{flex:1;overflow-y:auto;padding:4px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.lib-ghdr{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;padding:6px 4px 2px;display:flex;justify-content:space-between;cursor:pointer}
+.lib-ghdr:hover{color:var(--accent)}
+.lib-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:3px}
+.lib-item{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:5px 3px 4px;cursor:pointer;text-align:center;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;transition:border-color .1s,color .1s}
+.lib-item:hover{border-color:var(--accent);color:var(--accent)}
+.lib-item svg{width:32px;height:24px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="logo">tECHLAB <span>SCHEMATICS</span></span>
+  <div class="hgroup">
+    <button class="btn" id="btn-new" onclick="addLayer()" title="Новий шар">+</button>
+    <button class="btn" id="btn-save" onclick="saveDocument()" title="Зберегти (Ctrl+S)">💾</button>
+    <button class="btn" id="btn-open" onclick="loadDocument()" title="Відкрити">📂</button>
+    <input type="file" id="open-file-input" accept=".json" style="display:none" onchange="doLoadFile(event)">
+    <button class="btn btn-ok" id="btn-export-png" onclick="exportPNG()" title="Експорт PNG">⬇ PNG</button>
+    <button class="btn" id="btn-export-svg" onclick="exportSVG()" title="Експорт SVG">⬇ SVG</button>
+  </div>
+  <div class="sep"></div>
+  <div class="hgroup">
+    <button class="btn" id="btn-grid" onclick="toggleGrid()" title="Сітка (G)">⊞ СІТКА</button>
+    <button class="btn active" id="btn-snap" onclick="toggleSnap()" title="Прив'язка (S)">SNAP</button>
+    <button class="btn" id="btn-rulers" onclick="toggleRulers()" title="Лінійки">ЛІНІЙКИ</button>
+    <button class="btn" id="btn-props" onclick="toggleProps()" title="Властивості">⚙ PROPS</button>
+    <button class="btn" id="btn-theme" onclick="cycleTheme()">◐ ТЕМА</button>
+    <button class="btn" id="btn-lib" onclick="toggleLib()">📦</button>
+  </div>
+  <div class="sep"></div>
+  <div class="hgroup">
+    <button class="btn" id="btn-undo" onclick="undo()" title="Відмінити (Ctrl+Z)">↩ UNDO</button>
+    <button class="btn" id="btn-redo" onclick="redo()" title="Повторити (Ctrl+Y)">↪ REDO</button>
+    <button class="btn" id="btn-selectall" onclick="selectAll()" title="Вибрати все (Ctrl+A)">▣ ВСЕ</button>
+    <button class="btn btn-danger" id="btn-del" onclick="deleteSelected()" title="Видалити (Del)">ВИДАЛ</button>
+  </div>
+  <div class="sep"></div>
+  <div class="sep"></div>
+  <div class="lang-group">
+    <button class="lang-btn active" onclick="setLang('uk')" id="lang-uk"> UA</button>
+    <button class="lang-btn" onclick="setLang('ru')" id="lang-ru"> RU</button>
+    <button class="lang-btn" onclick="setLang('de')" id="lang-de"> DE</button>
+    <button class="lang-btn" onclick="setLang('en')" id="lang-en"> EN</button>
+  </div>
+  <div class="sep"></div>
+  <div class="st-item" style="padding: 0 6px;">
+    <div class="sim-indicator on" id="grid-dot"></div>
+    <span id="doc-info" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-left:6px;">A4 · 210×297 мм</span>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- LEFT TOOLBAR -->
+  <div class="toolbar" id="toolbar">
+    <!-- SELECT -->
+    <div class="tool-btn active" id="tool-select" onclick="setTool('select')" title="Вибір / Переміщення [V]">↖</div>
+    <div class="tool-btn" id="tool-pointer" onclick="setTool('pointer')" title="Вказівник (вибір групи) [A]">⊹</div>
+    <div class="tool-sep"></div>
+    <!-- DRAW -->
+    <div class="tool-btn" id="tool-line" onclick="setTool('line')" title="Лінія [L]">╱</div>
+    <div class="tool-btn" id="tool-wire" onclick="setTool('wire')" title="Провід (ортогональний) [W]">┐</div>
+    <div class="tool-btn" id="tool-arrow" onclick="setTool('arrow')" title="Стрілка [→]">→</div>
+    <div class="tool-btn" id="tool-rect" onclick="setTool('rect')" title="Прямокутник [R]">▭</div>
+    <div class="tool-btn" id="tool-circle" onclick="setTool('circle')" title="Еліпс / Коло [E]">◯</div>
+    <div class="tool-btn" id="tool-triangle" onclick="setTool('triangle')" title="Трикутник [T]">△</div>
+    <div class="tool-btn" id="tool-polygon" onclick="setTool('polygon')" title="Полігон [P]">⬡</div>
+    <div class="tool-btn" id="tool-bezier" onclick="setTool('bezier')" title="Крива Безьє [B]">∫</div>
+    <div class="tool-sep"></div>
+    <!-- ANNOTATE -->
+    <div class="tool-btn" id="tool-text" onclick="setTool('text')" title="Текст [X]">T</div>
+    <div class="tool-btn" id="tool-label" onclick="setTool('label')" title="Мітка з рамкою [K]">≡</div>
+    <div class="tool-btn" id="tool-dim" onclick="setTool('dim')" title="Розмір / Розмітка [D]">↔</div>
+    <div class="tool-sep"></div>
+    <!-- EDIT -->
+    <div class="tool-btn" id="tool-eraser" onclick="setTool('eraser')" title="Ластик [DEL]">⌫</div>
+    <div class="tool-btn" id="tool-pan" onclick="setTool('pan')" title="Переміщення полотна [Space]">✋</div>
+    <div class="tool-btn" id="tool-zoom" onclick="setTool('zoom')" title="Збільшення [Z]">🔍</div>
+    <div class="tool-sep"></div>
+    <!-- MEASURE -->
+    <div class="tool-btn" id="tool-measure" onclick="setTool('measure')" title="Вимірювання [M]">📏</div>
+    <div class="tool-btn" id="tool-note" onclick="setTool('note')" title="Нотатка [N]">📝</div>
+  </div>
+
+  <!-- LIBRARY -->
+  <div class="lib-panel" id="lib-panel">
+    <div class="panel-header" style="flex-shrink:0"><span>// БІБЛІОТЕКА</span></div>
+    <input class="lib-search" id="lib-search" placeholder="🔍 Пошук..." oninput="renderLib()">
+    <div class="lib-scroll" id="lib-scroll"></div>
+  </div>
+
+  <!-- CANVAS WRAPPER -->
+  <div class="canvas-area" id="canvas-area">
+    <!-- Rulers -->
+    <div class="ruler-corner"></div>
+    <div class="ruler-h" id="ruler-h"><canvas id="ruler-h-canvas"></canvas></div>
+    <div class="ruler-v" id="ruler-v"><canvas id="ruler-v-canvas"></canvas></div>
+    <!-- Grid canvas (behind) -->
+    <canvas id="grid-canvas"></canvas>
+    <!-- Main canvas -->
+    <canvas id="main-canvas"></canvas>
+    <!-- Zoom badge -->
+    <div class="zoom-badge">
+      <button onclick="zoomOut()">−</button>
+      <span id="zoom-label">100%</span>
+      <button onclick="zoomIn()">+</button>
+      <button onclick="zoomReset()" style="font-size:9px;font-family:'Share Tech Mono',monospace;">FIT</button>
+    </div>
+  </div>
+
+  <!-- RIGHT PROPERTIES PANEL -->
+  <div class="props-panel" id="props-panel">
+    <div class="panel-header">
+      <span>// PROPERTIES</span>
+      <span style="cursor:pointer;color:var(--muted)" onclick="toggleProps()">✕</span>
+    </div>
+    <div class="panel-scroll">
+
+      <!-- STROKE -->
+      <div class="prop-group">
+        <div class="prop-label">STROKE</div>
+        <div class="prop-row">
+          <label>Колір</label>
+          <input type="color" class="prop-input" id="prop-stroke-color" value="#00d4ff" onchange="updateProp()">
+        </div>
+        <div class="prop-row">
+          <label>Ширина</label>
+          <input type="number" class="prop-input" id="prop-stroke-w" value="2" min="0.5" max="50" step="0.5" onchange="updateProp()">
+        </div>
+        <div class="prop-row">
+          <label>Стиль</label>
+          <select class="prop-select" id="prop-stroke-style" onchange="updateProp()">
+            <option value="solid">Суцільна</option>
+            <option value="dashed">Штрихова</option>
+            <option value="dotted">Крапкова</option>
+            <option value="dashdot">Штрих-крапка</option>
+          </select>
+        </div>
+        <div class="color-swatches" id="stroke-swatches"></div>
+      </div>
+
+      <!-- FILL -->
+      <div class="prop-group">
+        <div class="prop-label">FILL</div>
+        <div class="prop-row">
+          <label>Тип</label>
+          <select class="prop-select" id="prop-fill-type" onchange="updateFillType()">
+            <option value="none">Без заливки</option>
+            <option value="solid">Сплошная</option>
+            <option value="grad_lr">Градієнт →</option>
+            <option value="grad_tb">Градієнт ↓</option>
+            <option value="grad_diag">Градієнт ↘</option>
+            <option value="grad_radial">Радіальний</option>
+            <option value="hatch_h">Штрих горіз.</option>
+            <option value="hatch_v">Штрих верт.</option>
+            <option value="hatch_cross">Штрих сітка</option>
+            <option value="hatch_diag1">Штрих / </option>
+            <option value="hatch_diag2">Штрих \ </option>
+            <option value="hatch_diag_cross">Штрих ✕</option>
+          </select>
+        </div>
+        <div class="prop-row">
+          <label>Колір 1</label>
+          <input type="color" class="prop-input" id="prop-fill-color" value="#112240" onchange="updateProp()">
+        </div>
+        <div id="fill-color2-row" class="prop-row" style="display:none">
+          <label>Колір 2</label>
+          <input type="color" class="prop-input" id="prop-fill-color2" value="#7c3aed" onchange="updateProp()">
+        </div>
+        <div id="fill-hatch-row" class="prop-row" style="display:none">
+          <label>Крок</label>
+          <input type="number" class="prop-input" id="prop-hatch-size" value="10" min="4" max="40" step="2" onchange="updateProp()">
+          <label style="min-width:30px">Тов.</label>
+          <input type="number" class="prop-input" id="prop-hatch-w" value="1" min="0.5" max="6" step="0.5" onchange="updateProp()">
+        </div>
+        <div class="prop-row">
+          <label>Прозор.</label>
+          <input type="range" class="prop-input" id="prop-fill-alpha" value="0" min="0" max="100" step="5" style="padding:8px 0" onchange="updateProp()">
+          <span id="fill-alpha-val" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);min-width:28px;text-align:right;">0%</span>
+        </div>
+        <div class="color-swatches" id="fill-swatches"></div>
+      </div>
+
+      <!-- TEXT PROPS -->
+      <div class="prop-group" id="text-props-group" style="display:none">
+        <div class="prop-label">ТЕКСТ</div>
+        <div class="prop-row">
+          <label>Шрифт</label>
+          <select class="prop-select" id="prop-font" onchange="updateProp()">
+            <option value="Share Tech Mono">Share Tech Mono</option>
+            <option value="Rajdhani">Rajdhani</option>
+            <option value="Fira Code">Fira Code</option>
+            <option value="Arial">Arial</option>
+            <option value="serif">Serif</option>
+          </select>
+        </div>
+        <div class="prop-row">
+          <label>Розмір</label>
+          <input type="number" class="prop-input" id="prop-font-size" value="14" min="6" max="200" onchange="updateProp()">
+        </div>
+        <div class="prop-row">
+          <label>Жирний</label>
+          <input type="checkbox" id="prop-bold" onchange="updateProp()" style="width:auto;flex:none;">
+        </div>
+      </div>
+
+      <!-- TRANSFORM -->
+      <div class="prop-group" id="transform-group" style="display:none">
+        <div class="prop-label">TRANSFORM</div>
+        <div class="prop-row">
+          <label>X</label>
+          <input type="number" class="prop-input" id="prop-x" onchange="updatePropTransform()">
+        </div>
+        <div class="prop-row">
+          <label>Y</label>
+          <input type="number" class="prop-input" id="prop-y" onchange="updatePropTransform()">
+        </div>
+        <div class="prop-row">
+          <label>Кут°</label>
+          <input type="number" class="prop-input" id="prop-rot" value="0" min="-360" max="360" onchange="updatePropTransform()">
+        </div>
+        <div class="prop-row">
+          <label>W</label>
+          <input type="number" class="prop-input" id="prop-w" onchange="updatePropTransform()">
+          <label>H</label>
+          <input type="number" class="prop-input" id="prop-h" onchange="updatePropTransform()">
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="prop-group">
+        <div class="prop-label">ДІЇ</div>
+        <button class="prop-btn" onclick="groupSelected()">⊞ Групувати</button>
+        <button class="prop-btn" onclick="ungroupSelected()">⊟ Розгрупувати</button>
+        <button class="prop-btn" onclick="bringToFront()">▲ На перший план</button>
+        <button class="prop-btn" onclick="sendToBack()">▼ На задній план</button>
+        <button class="prop-btn" onclick="duplicateSelected()">⧉ Дублювати</button>
+        <button class="prop-btn" onclick="flipH()">↔ Відбити гор.</button>
+        <button class="prop-btn" onclick="flipV()">↕ Відбити верт.</button>
+        <button class="prop-btn danger" onclick="deleteSelected()">🗑 Видалити</button>
+      </div>
+
+      <!-- LAYERS -->
+      <div class="prop-group">
+        <div class="prop-label" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>ШАРИ</span>
+          <span onclick="addLayer()" style="cursor:pointer;color:var(--accent);font-size:12px;">+</span>
+        </div>
+        <div class="layers-list" id="layers-list"></div>
+      </div>
+
+      <!-- DOC INFO -->
+      <div class="prop-group">
+        <div class="prop-label">ДОКУМЕНТ</div>
+        <div class="prop-row">
+          <label>Розмір</label>
+          <select class="prop-select" id="prop-page-size" onchange="changePageSize()">
+            <optgroup label="── ISO ──">
+              <option value="a6">A6 (105×148)</option>
+              <option value="a5">A5 (148×210)</option>
+              <option value="a4" selected>A4 (210×297)</option>
+              <option value="a3">A3 (297×420)</option>
+              <option value="a2">A2 (420×594)</option>
+              <option value="a1">A1 (594×841)</option>
+              <option value="a0">A0 (841×1189)</option>
+            </optgroup>
+            <optgroup label="── US ──">
+              <option value="letter">Letter (216×279)</option>
+              <option value="legal">Legal (216×356)</option>
+              <option value="tabloid">Tabloid (279×432)</option>
+            </optgroup>
+            <optgroup label="── Екран ──">
+              <option value="hd">HD 1280×720</option>
+              <option value="fhd">FHD 1920×1080</option>
+              <option value="4k">4K 3840×2160</option>
+              <option value="sq1">Квадрат 1000×1000</option>
+              <option value="sq2">Квадрат 2000×2000</option>
+            </optgroup>
+            <optgroup label="── Соц. мережі ──">
+              <option value="ig_post">Instagram пост (1080×1080)</option>
+              <option value="ig_story">Instagram сторіс (1080×1920)</option>
+              <option value="fb_cover">FB обкладинка (820×312)</option>
+              <option value="yt_thumb">YouTube прев'ю (1280×720)</option>
+            </optgroup>
+            <optgroup label="── Техн. ──">
+              <option value="a4_tech">A4 техн. (297×210 мм)</option>
+              <option value="a3_tech">A3 техн. (420×297 мм)</option>
+            </optgroup>
+            <option value="custom">✏ Свій розмір...</option>
+          </select>
+        </div>
+        <div class="prop-row">
+          <label>Орієнт.</label>
+          <select class="prop-select" id="prop-orient" onchange="changePageSize()">
+            <option value="portrait">Портрет</option>
+            <option value="landscape">Альбом</option>
+          </select>
+        </div>
+        <!-- Custom size inputs — shown only when "custom" selected -->
+        <div id="custom-size-row" style="display:none; flex-direction:column; gap:6px; margin-top:4px;">
+          <div class="prop-row">
+            <label>Ширина</label>
+            <input type="number" class="prop-input" id="prop-custom-w" value="800" min="100" max="10000" placeholder="px" oninput="applyCustomSize()">
+            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-left:2px;">px</span>
+          </div>
+          <div class="prop-row">
+            <label>Висота</label>
+            <input type="number" class="prop-input" id="prop-custom-h" value="600" min="100" max="10000" placeholder="px" oninput="applyCustomSize()">
+            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-left:2px;">px</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="st-item"><span class="cursor-blink"></span><span id="st-pos">X: 0  Y: 0</span></div>
+  <div class="st-item"><span style="color:var(--accent)" id="st-tool">ВИБІР</span></div>
+  <div class="st-item"><span id="st-objects">0 об'єктів</span></div>
+  <div class="st-item"><span id="st-selected">—</span></div>
+  <div class="st-item"><span id="st-snap" style="color:var(--wire-on)">SNAP: ON</span></div>
+  <div class="st-item" style="margin-left:auto"><span style="color:var(--accent2)">tECHLAB SCHEMATICS</span></div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div id="ctx-menu">
+  <div class="ctx-item" onclick="duplicateSelected()">Дублювати <span class="ctx-key">Ctrl+D</span></div>
+  <div class="ctx-item" onclick="groupSelected()">Групувати <span class="ctx-key">Ctrl+G</span></div>
+  <div class="ctx-item" onclick="ungroupSelected()">Розгрупувати <span class="ctx-key">Ctrl+Shift+G</span></div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="bringToFront()">На перший план <span class="ctx-key">]</span></div>
+  <div class="ctx-item" onclick="sendToBack()">На задній план <span class="ctx-key">[</span></div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="flipH()">Відбити гор. <span class="ctx-key">H</span></div>
+  <div class="ctx-item" onclick="flipV()">Відбити верт. <span class="ctx-key">V</span></div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="selectAll()">Вибрати все <span class="ctx-key">Ctrl+A</span></div>
+  <div class="ctx-item" onclick="deleteSelected()" style="color:var(--danger)">Видалити <span class="ctx-key">Del</span></div>
+</div>
+
+<!-- TEXT INPUT MODAL -->
+<div class="modal-overlay" id="text-modal">
+  <div class="modal">
+    <h3>// ТЕКСТ</h3>
+    <textarea id="text-input" rows="3" placeholder="Введіть текст..."></textarea>
+    <div class="modal-btns">
+      <button onclick="cancelTextModal()" style="background:var(--panel2);color:var(--muted);">Скасувати</button>
+      <button onclick="confirmTextModal()" style="background:var(--accent);color:#000;">Додати</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="modal-overlay" id="note-modal">
+  <div class="modal">
+    <h3>// НОТАТКА</h3>
+    <input type="text" id="note-title-input" placeholder="Заголовок нотатки...">
+    <textarea id="note-body-input" rows="4" placeholder="Текст нотатки..."></textarea>
+    <div class="modal-btns">
+      <button onclick="cancelNoteModal()" style="background:var(--panel2);color:var(--muted);">Скасувати</button>
+      <button onclick="confirmNoteModal()" style="background:var(--accent2);color:#fff;">Додати</button>
+    </div>
+  </div>
+</div>
+
+<!-- DIM RESULT BADGE -->
+<div id="measure-badge" style="position:fixed;display:none;background:var(--panel);border:1px solid var(--warn);border-radius:8px;padding:6px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--warn);z-index:9999;pointer-events:none;box-shadow:0 0 12px var(--warn)"></div>
+
+<script>
+// ============================================================
+// I18N TRANSLATIONS
+// ============================================================
+const LANGS = {
+  uk: {
+    newDoc:'+ НОВИЙ', save:'💾', open:'📂', exportPng:'⬇ PNG', exportSvg:'⬇ SVG',
+    grid:'⊞ СІТКА', snap:'SNAP', rulers:'ЛІНІЙКИ', props:'⚙ PROPS', theme:'◐ ТЕМА', lib:'📦',
+    undo:'↩ UNDO', redo:'↪ REDO', selectAll:'▣ ВСЕ', del:'ВИДАЛ',
+    toolSelect:'ВИБІР',toolPointer:'ВКАЗІВНИК',toolLine:'ЛІНІЯ',toolWire:'ПРОВІД',toolArrow:'СТРІЛКА',
+    toolRect:'ПРЯМОКУТНИК',toolCircle:'ЕЛІПС',toolTriangle:'ТРИКУТНИК',toolPolygon:'ПОЛІГОН',
+    toolBezier:'БЕЗЬЄ',toolText:'ТЕКСТ',toolLabel:'МІТКА',toolDim:'РОЗМІР',toolEraser:'ЛАСТИК',
+    toolPan:'ПЕРЕМІЩЕННЯ',toolZoom:'ЗБІЛЬШЕННЯ',toolMeasure:'ВИМІРЮВАННЯ',toolNote:'НОТАТКА',
+    propStroke:'STROKE', propFill:'FILL', propText:'ТЕКСТ', propTransform:'TRANSFORM', propActions:'ДІЇ',
+    propLayers:'ШАРИ', propDoc:'ДОКУМЕНТ',
+    colorLabel:'Колір', widthLabel:'Ширина', styleLabel:'Стиль',
+    transparLabel:'Прозор.', fontLabel:'Шрифт', sizeLabel:'Розмір', boldLabel:'Жирний', angleLabel:'Кут°',
+    strokeSolid:'Суцільна', strokeDashed:'Штрихова', strokeDotted:'Крапкова', strokeDashdot:'Штрих-крапка',
+    actGroup:'⊞ Групувати', actUngroup:'⊟ Розгрупувати', actFront:'▲ На перший план', actBack:'▼ На задній план',
+    actDup:'⧉ Дублювати', actFlipH:'↔ Відбити гор.', actFlipV:'↕ Відбити верт.', actDelete:'🗑 Видалити',
+    pageSize:'Розмір', pageOrient:'Орієнт.', portrait:'Портрет', landscape:'Альбом', custom:'Власний...',
+    libHeader:'// БІБЛІОТЕКА', libSearch:'🔍 Пошук...',
+    propsHeader:'// PROPERTIES',
+    ctxDup:'Дублювати', ctxGroup:'Групувати', ctxUngroup:'Розгрупувати',
+    ctxFront:'На перший план', ctxBack:'На задній план', ctxFlipH:'Відбити гор.', ctxFlipV:'Відбити верт.',
+    ctxAll:'Вибрати все', ctxDelete:'Видалити',
+    textModalTitle:'// ТЕКСТ', textPlaceholder:'Введіть текст...', textCancel:'Скасувати', textConfirm:'Додати',
+    noteModalTitle:'// НОТАТКА', noteTitlePlaceholder:'Заголовок нотатки...', noteBodyPlaceholder:'Текст нотатки...',
+    noteCancel:'Скасувати', noteConfirm:'Додати',
+    confirmNew:'Створити новий документ? Незбережені зміни будуть втрачені.',
+    snapOn:'SNAP: ON', snapOff:'SNAP: OFF',
+    objects:'об\'єктів', addLayerName:'Шар '
+  },
+  ru: {
+    newDoc:'+ НОВЫЙ', save:'💾', open:'📂', exportPng:'⬇ PNG', exportSvg:'⬇ SVG',
+    grid:'⊞ СЕТКА', snap:'SNAP', rulers:'ЛИНЕЙКИ', props:'⚙ PROPS', theme:'◐ ТЕМА', lib:'📦',
+    undo:'↩ UNDO', redo:'↪ REDO', selectAll:'▣ ВСЁ', del:'УДАЛИТЬ',
+    toolSelect:'ВЫБОР',toolPointer:'УКАЗАТЕЛЬ',toolLine:'ЛИНИЯ',toolWire:'ПРОВОД',toolArrow:'СТРЕЛКА',
+    toolRect:'ПРЯМОУГОЛ',toolCircle:'ЭЛЛИПС',toolTriangle:'ТРЕУГОЛ',toolPolygon:'ПОЛИГОН',
+    toolBezier:'БЕЗЬЕ',toolText:'ТЕКСТ',toolLabel:'МЕТКА',toolDim:'РАЗМЕР',toolEraser:'ЛАСТИК',
+    toolPan:'ПЕРЕМЕЩЕНИЕ',toolZoom:'УВЕЛИЧЕНИЕ',toolMeasure:'ИЗМЕРЕНИЕ',toolNote:'ЗАМЕТКА',
+    propStroke:'STROKE', propFill:'FILL', propText:'ТЕКСТ', propTransform:'TRANSFORM', propActions:'ДЕЙСТВИЯ',
+    propLayers:'СЛОИ', propDoc:'ДОКУМЕНТ',
+    colorLabel:'Цвет', widthLabel:'Ширина', styleLabel:'Стиль',
+    transparLabel:'Прозрач.', fontLabel:'Шрифт', sizeLabel:'Размер', boldLabel:'Жирный', angleLabel:'Угол°',
+    strokeSolid:'Сплошная', strokeDashed:'Штриховая', strokeDotted:'Точечная', strokeDashdot:'Штрих-точка',
+    actGroup:'⊞ Группировать', actUngroup:'⊟ Разгруппировать', actFront:'▲ На передний план', actBack:'▼ На задний план',
+    actDup:'⧉ Дублировать', actFlipH:'↔ Отразить гор.', actFlipV:'↕ Отразить верт.', actDelete:'🗑 Удалить',
+    pageSize:'Размер', pageOrient:'Ориент.', portrait:'Портрет', landscape:'Альбом', custom:'Свой...',
+    libHeader:'// БИБЛИОТЕКА', libSearch:'🔍 Поиск...',
+    propsHeader:'// PROPERTIES',
+    ctxDup:'Дублировать', ctxGroup:'Группировать', ctxUngroup:'Разгруппировать',
+    ctxFront:'На передний план', ctxBack:'На задний план', ctxFlipH:'Отразить гор.', ctxFlipV:'Отразить верт.',
+    ctxAll:'Выбрать всё', ctxDelete:'Удалить',
+    textModalTitle:'// ТЕКСТ', textPlaceholder:'Введите текст...', textCancel:'Отмена', textConfirm:'Добавить',
+    noteModalTitle:'// ЗАМЕТКА', noteTitlePlaceholder:'Заголовок заметки...', noteBodyPlaceholder:'Текст заметки...',
+    noteCancel:'Отмена', noteConfirm:'Добавить',
+    confirmNew:'Создать новый документ? Несохранённые изменения будут потеряны.',
+    snapOn:'SNAP: ВКЛ', snapOff:'SNAP: ВЫКЛ',
+    objects:'объектов', addLayerName:'Слой '
+  },
+  de: {
+    newDoc:'+ NEU', save:'💾', open:'📂', exportPng:'⬇ PNG', exportSvg:'⬇ SVG',
+    grid:'⊞ RASTER', snap:'SNAP', rulers:'LINEAL', props:'⚙ PROPS', theme:'◐ THEMA', lib:'📦',
+    undo:'↩ UNDO', redo:'↪ REDO', selectAll:'▣ ALLE', del:'LÖSCH',
+    toolSelect:'AUSWAHL',toolPointer:'ZEIGER',toolLine:'LINIE',toolWire:'KABEL',toolArrow:'PFEIL',
+    toolRect:'RECHTECK',toolCircle:'ELLIPSE',toolTriangle:'DREIECK',toolPolygon:'POLYGON',
+    toolBezier:'BEZIER',toolText:'TEXT',toolLabel:'BESCHRIFT',toolDim:'MAß',toolEraser:'RADIERER',
+    toolPan:'VERSCHIEBEN',toolZoom:'ZOOM',toolMeasure:'MESSEN',toolNote:'NOTIZ',
+    propStroke:'STRICH', propFill:'FÜLLUNG', propText:'TEXT', propTransform:'TRANSFORM', propActions:'AKTIONEN',
+    propLayers:'EBENEN', propDoc:'DOKUMENT',
+    colorLabel:'Farbe', widthLabel:'Breite', styleLabel:'Stil',
+    transparLabel:'Transp.', fontLabel:'Schrift', sizeLabel:'Größe', boldLabel:'Fett', angleLabel:'Winkel°',
+    strokeSolid:'Durchgehend', strokeDashed:'Gestrichelt', strokeDotted:'Gepunktet', strokeDashdot:'Strich-Punkt',
+    actGroup:'⊞ Gruppieren', actUngroup:'⊟ Aufheben', actFront:'▲ Vordergrund', actBack:'▼ Hintergrund',
+    actDup:'⧉ Duplizieren', actFlipH:'↔ Hor. spiegeln', actFlipV:'↕ Vert. spiegeln', actDelete:'🗑 Löschen',
+    pageSize:'Format', pageOrient:'Orient.', portrait:'Hochformat', landscape:'Querformat', custom:'Eigenes...',
+    libHeader:'// BIBLIOTHEK', libSearch:'🔍 Suche...',
+    propsHeader:'// EIGENSCHAFTEN',
+    ctxDup:'Duplizieren', ctxGroup:'Gruppieren', ctxUngroup:'Aufheben',
+    ctxFront:'Vordergrund', ctxBack:'Hintergrund', ctxFlipH:'Hor. spiegeln', ctxFlipV:'Vert. spiegeln',
+    ctxAll:'Alles auswählen', ctxDelete:'Löschen',
+    textModalTitle:'// TEXT', textPlaceholder:'Text eingeben...', textCancel:'Abbrechen', textConfirm:'Hinzufügen',
+    noteModalTitle:'// NOTIZ', noteTitlePlaceholder:'Notiz-Titel...', noteBodyPlaceholder:'Notiztext...',
+    noteCancel:'Abbrechen', noteConfirm:'Hinzufügen',
+    confirmNew:'Neues Dokument erstellen? Ungespeicherte Änderungen gehen verloren.',
+    snapOn:'SNAP: AN', snapOff:'SNAP: AUS',
+    objects:'Objekte', addLayerName:'Ebene '
+  },
+  en: {
+    newDoc:'+ NEW', save:'💾', open:'📂', exportPng:'⬇ PNG', exportSvg:'⬇ SVG',
+    grid:'⊞ GRID', snap:'SNAP', rulers:'📐 RULERS', props:'⚙ PROPS', theme:'◐ THEME', lib:'📦',
+    undo:'↩ UNDO', redo:'↪ REDO', selectAll:'▣ ALL', del:'DELETE',
+    toolSelect:'SELECT',toolPointer:'POINTER',toolLine:'LINE',toolWire:'WIRE',toolArrow:'ARROW',
+    toolRect:'RECT',toolCircle:'ELLIPSE',toolTriangle:'TRIANGLE',toolPolygon:'POLYGON',
+    toolBezier:'BEZIER',toolText:'TEXT',toolLabel:'LABEL',toolDim:'DIM',toolEraser:'ERASER',
+    toolPan:'PAN',toolZoom:'ZOOM',toolMeasure:'MEASURE',toolNote:'NOTE',
+    propStroke:'STROKE', propFill:'FILL', propText:'TEXT', propTransform:'TRANSFORM', propActions:'ACTIONS',
+    propLayers:'LAYERS', propDoc:'DOCUMENT',
+    colorLabel:'Color', widthLabel:'Width', styleLabel:'Style',
+    transparLabel:'Opacity', fontLabel:'Font', sizeLabel:'Size', boldLabel:'Bold', angleLabel:'Angle°',
+    strokeSolid:'Solid', strokeDashed:'Dashed', strokeDotted:'Dotted', strokeDashdot:'Dash-dot',
+    actGroup:'⊞ Group', actUngroup:'⊟ Ungroup', actFront:'▲ Bring to Front', actBack:'▼ Send to Back',
+    actDup:'⧉ Duplicate', actFlipH:'↔ Flip H', actFlipV:'↕ Flip V', actDelete:'🗑 Delete',
+    pageSize:'Size', pageOrient:'Orient.', portrait:'Portrait', landscape:'Landscape', custom:'Custom...',
+    libHeader:'// LIBRARY', libSearch:'🔍 Search...',
+    propsHeader:'// PROPERTIES',
+    ctxDup:'Duplicate', ctxGroup:'Group', ctxUngroup:'Ungroup',
+    ctxFront:'Bring to Front', ctxBack:'Send to Back', ctxFlipH:'Flip H', ctxFlipV:'Flip V',
+    ctxAll:'Select All', ctxDelete:'Delete',
+    textModalTitle:'// TEXT', textPlaceholder:'Enter text...', textCancel:'Cancel', textConfirm:'Add',
+    noteModalTitle:'// NOTE', noteTitlePlaceholder:'Note title...', noteBodyPlaceholder:'Note text...',
+    noteCancel:'Cancel', noteConfirm:'Add',
+    confirmNew:'Create new document? Unsaved changes will be lost.',
+    snapOn:'SNAP: ON', snapOff:'SNAP: OFF',
+    objects:'objects', addLayerName:'Layer '
+  }
+};
+
+let currentLang = 'uk';
+
+function t(key){ return (LANGS[currentLang]||LANGS.uk)[key] || key; }
+
+function setLang(lang){
+  currentLang = lang;
+  // Update lang buttons
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  const lb = document.getElementById('lang-'+lang);
+  if(lb) lb.classList.add('active');
+  applyLang();
+}
+
+function applyLang(){
+  const L = LANGS[currentLang] || LANGS.uk;
+  const q = id => document.getElementById(id);
+
+  // Header buttons — by ID, 100% reliable
+  q('btn-new') && (q('btn-new').textContent = L.newDoc);
+  q('btn-save') && (q('btn-save').textContent = L.save);
+  q('btn-open') && (q('btn-open').textContent = L.open);
+  q('btn-export-png') && (q('btn-export-png').textContent = L.exportPng);
+  q('btn-export-svg') && (q('btn-export-svg').textContent = L.exportSvg);
+  q('btn-grid') && (q('btn-grid').textContent = L.grid);
+  q('btn-snap') && (q('btn-snap').textContent = L.snap);
+  q('btn-rulers') && (q('btn-rulers').textContent = L.rulers);
+  q('btn-props') && (q('btn-props').textContent = L.props);
+  q('btn-theme') && (q('btn-theme').textContent = L.theme);
+  q('btn-lib') && (q('btn-lib').textContent = L.lib);
+  q('btn-undo') && (q('btn-undo').textContent = L.undo);
+  q('btn-redo') && (q('btn-redo').textContent = L.redo);
+  q('btn-selectall') && (q('btn-selectall').textContent = L.selectAll);
+  q('btn-del') && (q('btn-del').textContent = L.del);
+
+  // Props panel header
+  q('props-panel').querySelector('.panel-header span').textContent = L.propsHeader;
+
+  // Prop labels
+  const pLabels = q('props-panel').querySelectorAll('.prop-label');
+  if(pLabels[0]) pLabels[0].textContent = L.propStroke;
+  if(pLabels[1]) pLabels[1].textContent = L.propFill;
+  if(pLabels[2]) pLabels[2].textContent = L.propText;
+  if(pLabels[3]) pLabels[3].textContent = L.propTransform;
+  if(pLabels[4]) pLabels[4].textContent = L.propActions;
+  if(pLabels[5]){ const sp = pLabels[5].querySelector('span:first-child'); if(sp) sp.textContent = L.propLayers; }
+  if(pLabels[6]) pLabels[6].textContent = L.propDoc;
+
+  // Stroke color/width/style labels
+  const sRows = q('props-panel').querySelectorAll('.prop-group')[0]?.querySelectorAll('.prop-row label');
+  if(sRows){ sRows[0] && (sRows[0].textContent = L.colorLabel); sRows[1] && (sRows[1].textContent = L.widthLabel); sRows[2] && (sRows[2].textContent = L.styleLabel); }
+
+  // Fill color/alpha labels
+  const fRows = q('props-panel').querySelectorAll('.prop-group')[1]?.querySelectorAll('.prop-row label');
+  if(fRows){ fRows[0] && (fRows[0].textContent = L.colorLabel); fRows[1] && (fRows[1].textContent = L.transparLabel); }
+
+  // Text props labels
+  const tRows = q('text-props-group')?.querySelectorAll('.prop-row label');
+  if(tRows){ tRows[0] && (tRows[0].textContent = L.fontLabel); tRows[1] && (tRows[1].textContent = L.sizeLabel); tRows[2] && (tRows[2].textContent = L.boldLabel); }
+
+  // Transform labels
+  const trRows = q('transform-group')?.querySelectorAll('.prop-row label');
+  if(trRows){ trRows[2] && (trRows[2].textContent = L.angleLabel); }
+
+  // Stroke style options
+  const styleSelect = q('prop-stroke-style');
+  if(styleSelect){
+    styleSelect.options[0].textContent = L.strokeSolid;
+    styleSelect.options[1].textContent = L.strokeDashed;
+    styleSelect.options[2].textContent = L.strokeDotted;
+    styleSelect.options[3].textContent = L.strokeDashdot;
+  }
+
+  // Actions buttons
+  const actBtns = q('props-panel').querySelectorAll('.prop-btn');
+  if(actBtns[0]) actBtns[0].textContent = L.actGroup;
+  if(actBtns[1]) actBtns[1].textContent = L.actUngroup;
+  if(actBtns[2]) actBtns[2].textContent = L.actFront;
+  if(actBtns[3]) actBtns[3].textContent = L.actBack;
+  if(actBtns[4]) actBtns[4].textContent = L.actDup;
+  if(actBtns[5]) actBtns[5].textContent = L.actFlipH;
+  if(actBtns[6]) actBtns[6].textContent = L.actFlipV;
+  if(actBtns[7]) actBtns[7].textContent = L.actDelete;
+
+  // Page orient/size selects
+  const orientSel = q('prop-orient');
+  if(orientSel){ orientSel.options[0].textContent = L.portrait; orientSel.options[1].textContent = L.landscape; }
+  const pageSizeSel = q('prop-page-size');
+  if(pageSizeSel){ const customOpt = pageSizeSel.querySelector('option[value="custom"]'); if(customOpt) customOpt.textContent = L.custom; }
+
+  // Doc group row labels
+  const allPropGroups2 = q('props-panel')?.querySelectorAll('.prop-group');
+  if(allPropGroups2){
+    const docGroup2 = allPropGroups2[allPropGroups2.length-1];
+    if(docGroup2){
+      const dRows = docGroup2.querySelectorAll('.prop-row label');
+      if(dRows[0]) dRows[0].textContent = L.pageSize;
+      if(dRows[1]) dRows[1].textContent = L.pageOrient;
+    }
+  }
+
+  // Library
+  const libHdr = q('lib-panel')?.querySelector('.panel-header span');
+  if(libHdr) libHdr.textContent = L.libHeader;
+  const libSrch = q('lib-search');
+  if(libSrch) libSrch.placeholder = L.libSearch;
+
+  // Context menu
+  const ctxItems = q('ctx-menu')?.querySelectorAll('.ctx-item');
+  if(ctxItems){
+    ctxItems[0] && (ctxItems[0].childNodes[0].textContent = L.ctxDup + ' ');
+    ctxItems[1] && (ctxItems[1].childNodes[0].textContent = L.ctxGroup + ' ');
+    ctxItems[2] && (ctxItems[2].childNodes[0].textContent = L.ctxUngroup + ' ');
+    ctxItems[3] && (ctxItems[3].childNodes[0].textContent = L.ctxFront + ' ');
+    ctxItems[4] && (ctxItems[4].childNodes[0].textContent = L.ctxBack + ' ');
+    ctxItems[5] && (ctxItems[5].childNodes[0].textContent = L.ctxFlipH + ' ');
+    ctxItems[6] && (ctxItems[6].childNodes[0].textContent = L.ctxFlipV + ' ');
+    ctxItems[7] && (ctxItems[7].childNodes[0].textContent = L.ctxAll + ' ');
+    ctxItems[8] && (ctxItems[8].childNodes[0].textContent = L.ctxDelete + ' ');
+  }
+
+  // Modals
+  const tmTitle = q('text-modal')?.querySelector('h3');
+  if(tmTitle) tmTitle.textContent = L.textModalTitle;
+  const textInp = q('text-input');
+  if(textInp) textInp.placeholder = L.textPlaceholder;
+  const tmBtns = q('text-modal')?.querySelectorAll('button');
+  if(tmBtns){ tmBtns[0] && (tmBtns[0].textContent = L.textCancel); tmBtns[1] && (tmBtns[1].textContent = L.textConfirm); }
+
+  const nmTitle = q('note-modal')?.querySelector('h3');
+  if(nmTitle) nmTitle.textContent = L.noteModalTitle;
+  const noteTitleInp = q('note-title-input');
+  if(noteTitleInp) noteTitleInp.placeholder = L.noteTitlePlaceholder;
+  const noteBodyInp = q('note-body-input');
+  if(noteBodyInp) noteBodyInp.placeholder = L.noteBodyPlaceholder;
+  const nmBtns = q('note-modal')?.querySelectorAll('button');
+  if(nmBtns){ nmBtns[0] && (nmBtns[0].textContent = L.noteCancel); nmBtns[1] && (nmBtns[1].textContent = L.noteConfirm); }
+
+  // Status bar tool name (update current tool display)
+  const toolNames = {
+    select:L.toolSelect, pointer:L.toolPointer, line:L.toolLine, wire:L.toolWire,
+    arrow:L.toolArrow, rect:L.toolRect, circle:L.toolCircle, triangle:L.toolTriangle,
+    polygon:L.toolPolygon, bezier:L.toolBezier, text:L.toolText, label:L.toolLabel,
+    dim:L.toolDim, eraser:L.toolEraser, pan:L.toolPan, zoom:L.toolZoom,
+    measure:L.toolMeasure, note:L.toolNote
+  };
+  const stTool = q('st-tool');
+  if(stTool && toolNames[state.tool]) stTool.textContent = toolNames[state.tool];
+
+  // Update snap status
+  const stSnap = q('st-snap');
+  if(stSnap) stSnap.textContent = state.snapEnabled ? L.snapOn : L.snapOff;
+
+  // Objects count
+  updateStatusBar();
+}
+
+function updateStatusBar(){
+  const cnt = state.objects.length;
+  const stObj = document.getElementById('st-objects');
+  if(stObj) stObj.textContent = cnt + ' ' + t('objects');
+}
+
+// ============================================================
+// STATE
+// ============================================================
+const THEMES = ['dark','light','retro','neon'];
+let themeIdx = 0;
+
+const state = {
+  tool: 'select',
+  objects: [],
+  selected: [],
+  layers: [{id:1,name:'Шар 1',visible:true,locked:false}],
+  activeLayer: 1,
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+  gridSize: 20,
+  gridVisible: true,
+  snapEnabled: true,
+  rulersVisible: true,
+  propsVisible: true,
+  undoStack: [],
+  redoStack: [],
+  strokeColor: '#00d4ff',
+  strokeWidth: 2,
+  strokeStyle: 'solid',
+  fillColor: '#112240',
+  fillColor2: '#7c3aed',
+  fillType: 'none',
+  fillAlpha: 0,
+  hatchSize: 10,
+  hatchW: 1,
+  fontFamily: 'Share Tech Mono',
+  fontSize: 14,
+  fontBold: false,
+  pageW: 794,
+  pageH: 1123,
+  mouse: {x:0,y:0},
+};
+let objId = 1;
+let dragging = false, dragStart = null, dragObj = null;
+let drawing = false, drawStart = null, drawCurrent = null, drawPoints = [];
+let panning = false, panStart = null;
+let selBox = null;
+let textPending = null, notePending = null;
+let measureStart = null, measureEnd = null;
+
+// ============================================================
+// CANVAS SETUP
+// ============================================================
+let canvasArea, mainCanvas, gridCanvas, ctx, gctx;
+const DPR = window.devicePixelRatio || 1;
+
+function resizeCanvases() {
+  if (!canvasArea || !mainCanvas || !gridCanvas) return;
+  const rulerSize = state.rulersVisible ? 20 : 0;
+  const w = canvasArea.clientWidth - rulerSize;
+  const h = canvasArea.clientHeight - rulerSize;
+
+  mainCanvas.style.top = rulerSize + 'px';
+  mainCanvas.style.left = rulerSize + 'px';
+  gridCanvas.style.top = rulerSize + 'px';
+  gridCanvas.style.left = rulerSize + 'px';
+
+  mainCanvas.width = Math.round(w * DPR);
+  mainCanvas.height = Math.round(h * DPR);
+  mainCanvas.style.width = w + 'px';
+  mainCanvas.style.height = h + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+  gridCanvas.width = Math.round(w * DPR);
+  gridCanvas.height = Math.round(h * DPR);
+  gridCanvas.style.width = w + 'px';
+  gridCanvas.style.height = h + 'px';
+  gctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+  if (rulerSize > 0) {
+    const rh = document.getElementById('ruler-h-canvas');
+    const rv = document.getElementById('ruler-v-canvas');
+    rh.width = Math.round(w * DPR);
+    rh.height = Math.round(20 * DPR);
+    rh.style.width = w + 'px';
+    rh.style.height = '20px';
+    rv.width = Math.round(20 * DPR);
+    rv.height = Math.round(h * DPR);
+    rv.style.width = '20px';
+    rv.style.height = h + 'px';
+  }
+
+  drawAll();
+}
+
+window.addEventListener('resize', resizeCanvases);
+
+// ============================================================
+// COORD HELPERS
+// ============================================================
+function toCanvas(wx, wy) {
+  return { x: wx * state.zoom + state.panX, y: wy * state.zoom + state.panY };
+}
+function toWorld(cx, cy) {
+  return { x: (cx - state.panX) / state.zoom, y: (cy - state.panY) / state.zoom };
+}
+function snap(v) {
+  if (!state.snapEnabled) return v;
+  return Math.round(v / state.gridSize) * state.gridSize;
+}
+function snapPt(x, y) { return { x: snap(x), y: snap(y) }; }
+function getCanvasPos(e) {
+  const r = mainCanvas.getBoundingClientRect();
+  const cx = (e.clientX || e.touches?.[0]?.clientX || 0) - r.left;
+  const cy = (e.clientY || e.touches?.[0]?.clientY || 0) - r.top;
+  return { cx, cy, ...toWorld(cx, cy) };
+}
+
+// ============================================================
+// DRAW GRID & RULERS
+// ============================================================
+function drawGrid() {
+  if (!canvasArea || !gctx) return;
+  const w = mainCanvas.clientWidth || (canvasArea.clientWidth - 20);
+  const h = mainCanvas.clientHeight || (canvasArea.clientHeight - 20);
+  gctx.clearRect(0, 0, w, h);
+
+  const pg = toCanvas(0, 0);
+  const pgW = state.pageW * state.zoom, pgH = state.pageH * state.zoom;
+  const bgColor = getComputedStyle(document.body).getPropertyValue('--canvas-bg').trim() || '#020b14';
+  const accentColor = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#00d4ff';
+  const borderColor = getComputedStyle(document.body).getPropertyValue('--border').trim() || '#1e3a5f';
+
+  // Canvas background
+  gctx.fillStyle = bgColor;
+  gctx.fillRect(0, 0, w, h);
+
+  // Page rect with glow
+  gctx.fillStyle = '#0a1628';
+  gctx.shadowColor = accentColor + '44';
+  gctx.shadowBlur = 20;
+  gctx.fillRect(pg.x, pg.y, pgW, pgH);
+  gctx.shadowBlur = 0;
+  gctx.strokeStyle = accentColor;
+  gctx.lineWidth = 1;
+  gctx.setLineDash([]);
+  gctx.strokeRect(pg.x, pg.y, pgW, pgH);
+
+  if (!state.gridVisible) { drawRulers(); return; }
+
+  const gs = state.gridSize * state.zoom;
+  if (gs < 4) { drawRulers(); return; }
+
+  gctx.strokeStyle = borderColor;
+  gctx.lineWidth = 0.5;
+  gctx.globalAlpha = 0.5;
+
+  const startX = ((state.panX % gs) + gs) % gs;
+  const startY = ((state.panY % gs) + gs) % gs;
+  for (let x = startX; x < w; x += gs) {
+    gctx.beginPath(); gctx.moveTo(x, 0); gctx.lineTo(x, h); gctx.stroke();
+  }
+  for (let y = startY; y < h; y += gs) {
+    gctx.beginPath(); gctx.moveTo(0, y); gctx.lineTo(w, y); gctx.stroke();
+  }
+  gctx.globalAlpha = 1;
+  drawRulers();
+}
+
+function drawRulers() {
+  if (!state.rulersVisible || !canvasArea) return;
+  const rhc = document.getElementById('ruler-h-canvas');
+  const rvc = document.getElementById('ruler-v-canvas');
+  const rhCtx = rhc.getContext('2d');
+  const rvCtx = rvc.getContext('2d');
+
+  const accent = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#00d4ff';
+  const muted  = getComputedStyle(document.body).getPropertyValue('--muted').trim()  || '#4a7a99';
+  const panel  = getComputedStyle(document.body).getPropertyValue('--panel').trim()  || '#0d1b2a';
+  const borderC= getComputedStyle(document.body).getPropertyValue('--border').trim() || '#1e3a5f';
+
+  const rw = canvasArea.clientWidth - 20;
+  const rh2 = canvasArea.clientHeight - 20;
+
+  // ── Horizontal ruler ──────────────────────────────────
+  rhCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  rhCtx.clearRect(0, 0, rw, 20);
+  rhCtx.fillStyle = panel;
+  rhCtx.fillRect(0, 0, rw, 20);
+  // bottom border line
+  rhCtx.strokeStyle = borderC; rhCtx.lineWidth = 1; rhCtx.setLineDash([]);
+  rhCtx.beginPath(); rhCtx.moveTo(0, 19.5); rhCtx.lineTo(rw, 19.5); rhCtx.stroke();
+
+  const gs = state.gridSize * state.zoom;
+  // Choose a readable tick interval (min ~60px apart)
+  let step = gs;
+  while (step < 60) step *= 2;
+  if (step > 200) step = Math.ceil(step / 100) * 100 * (state.zoom > 0 ? 1/state.zoom : 1) * state.zoom;
+
+  const offX = ((state.panX % step) + step) % step;
+  rhCtx.font = `${9 * Math.min(DPR, 1.5)}px "Share Tech Mono", monospace`;
+  rhCtx.textBaseline = 'top';
+
+  for (let x = offX - step; x < rw; x += step) {
+    const wx = Math.round((x - state.panX) / state.zoom);
+    // tick mark
+    rhCtx.strokeStyle = accent; rhCtx.lineWidth = 1;
+    rhCtx.beginPath(); rhCtx.moveTo(x, 12); rhCtx.lineTo(x, 20); rhCtx.stroke();
+    // small sub-ticks
+    rhCtx.strokeStyle = muted; rhCtx.lineWidth = 0.5;
+    rhCtx.beginPath(); rhCtx.moveTo(x + step/2, 16); rhCtx.lineTo(x + step/2, 20); rhCtx.stroke();
+    // label
+    rhCtx.fillStyle = muted;
+    rhCtx.fillText(wx, x + 3, 2);
+  }
+
+  // ── Vertical ruler ────────────────────────────────────
+  rvCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  rvCtx.clearRect(0, 0, 20, rh2);
+  rvCtx.fillStyle = panel;
+  rvCtx.fillRect(0, 0, 20, rh2);
+  // right border line
+  rvCtx.strokeStyle = borderC; rvCtx.lineWidth = 1; rvCtx.setLineDash([]);
+  rvCtx.beginPath(); rvCtx.moveTo(19.5, 0); rvCtx.lineTo(19.5, rh2); rvCtx.stroke();
+
+  const offY = ((state.panY % step) + step) % step;
+  rvCtx.font = `${9 * Math.min(DPR, 1.5)}px "Share Tech Mono", monospace`;
+
+  for (let y = offY - step; y < rh2; y += step) {
+    const wy = Math.round((y - state.panY) / state.zoom);
+    rvCtx.strokeStyle = accent; rvCtx.lineWidth = 1;
+    rvCtx.beginPath(); rvCtx.moveTo(12, y); rvCtx.lineTo(20, y); rvCtx.stroke();
+    rvCtx.strokeStyle = muted; rvCtx.lineWidth = 0.5;
+    rvCtx.beginPath(); rvCtx.moveTo(16, y + step/2); rvCtx.lineTo(20, y + step/2); rvCtx.stroke();
+    // rotated label
+    rvCtx.save();
+    rvCtx.translate(10, y + 3);
+    rvCtx.rotate(-Math.PI / 2);
+    rvCtx.fillStyle = muted;
+    rvCtx.textBaseline = 'top';
+    rvCtx.fillText(wy, 0, 0);
+    rvCtx.restore();
+  }
+}
+
+// ============================================================
+// FILL HELPERS
+// ============================================================
+function makeFill(c, obj, x, y, w, h){
+  const ft  = obj.fillType  || 'none';
+  const fc  = obj.fillColor || '#112240';
+  const fc2 = obj.fillColor2|| '#7c3aed';
+  const fa  = obj.fillAlpha !== undefined ? obj.fillAlpha : 0;
+  if(ft === 'none' || fa === 0) return null;
+
+  if(ft === 'solid') return fc;
+
+  if(ft.startsWith('grad')){
+    let g;
+    if(ft === 'grad_lr')     g = c.createLinearGradient(x,y,x+w,y);
+    else if(ft === 'grad_tb') g = c.createLinearGradient(x,y,x,y+h);
+    else if(ft === 'grad_diag') g = c.createLinearGradient(x,y,x+w,y+h);
+    else                      g = c.createRadialGradient(x+w/2,y+h/2,0,x+w/2,y+h/2,Math.max(w,h)/2);
+    g.addColorStop(0, fc);
+    g.addColorStop(1, fc2);
+    return g;
+  }
+
+  if(ft.startsWith('hatch')){
+    const sz = (obj.hatchSize||10) * state.zoom;
+    const lw = (obj.hatchW||1) * state.zoom;
+    const pat = document.createElement('canvas');
+    pat.width = sz*2; pat.height = sz*2;
+    const pc = pat.getContext('2d');
+    pc.strokeStyle = fc;
+    pc.lineWidth = lw;
+    pc.lineCap = 'square';
+    const draw = (x1,y1,x2,y2) => { pc.beginPath(); pc.moveTo(x1,y1); pc.lineTo(x2,y2); pc.stroke(); };
+    const s = sz*2;
+    if(ft==='hatch_h'){ for(let i=0;i<s*2;i+=sz) draw(0,i,s,i); }
+    else if(ft==='hatch_v'){ for(let i=0;i<s*2;i+=sz) draw(i,0,i,s); }
+    else if(ft==='hatch_cross'){ for(let i=0;i<s*2;i+=sz){ draw(0,i,s,i); draw(i,0,i,s); } }
+    else if(ft==='hatch_diag1'){ for(let i=-s;i<s*2;i+=sz){ draw(i,0,i+s,s); draw(i,0,i+s,s); } }
+    else if(ft==='hatch_diag2'){ for(let i=-s;i<s*2;i+=sz){ draw(i,s,i+s,0); } }
+    else if(ft==='hatch_diag_cross'){
+      for(let i=-s;i<s*2;i+=sz){ draw(i,0,i+s,s); draw(i,s,i+s,0); }
+    }
+    return c.createPattern(pat,'repeat');
+  }
+  return null;
+}
+
+function applyFill(c, obj, x, y, w, h){
+  const fa = obj.fillAlpha !== undefined ? obj.fillAlpha : 0;
+  if((obj.fillType||'none')==='none' || fa===0) return;
+  const fill = makeFill(c, obj, x, y, w, h);
+  if(!fill) return;
+  c.save();
+  c.globalAlpha = fa / 100;
+  c.fillStyle = fill;
+  c.fill();
+  c.restore();
+}
+
+// ============================================================
+// STROKE STYLE
+// ============================================================
+function applyStrokeStyle(c, style, w) {
+  c.lineWidth = w;
+  if (style === 'dashed') c.setLineDash([w*6, w*4]);
+  else if (style === 'dotted') c.setLineDash([w, w*3]);
+  else if (style === 'dashdot') c.setLineDash([w*8, w*3, w, w*3]);
+  else c.setLineDash([]);
+}
+
+// ============================================================
+// DRAW OBJECTS
+// ============================================================
+function drawObject(c, obj, isSelected) {
+  if (!obj.visible) return;
+  c.save();
+  c.globalAlpha = obj.opacity !== undefined ? obj.opacity : 1;
+
+  if (obj.rotation) {
+    const cx = obj.x + (obj.w||0)/2, cy = obj.y + (obj.h||0)/2;
+    const p = toCanvas(cx, cy);
+    c.translate(p.x, p.y);
+    c.rotate(obj.rotation * Math.PI / 180);
+    c.translate(-p.x, -p.y);
+  }
+
+  if (obj.flipH || obj.flipV) {
+    const cx = obj.x + (obj.w||0)/2, cy = obj.y + (obj.h||0)/2;
+    const p = toCanvas(cx, cy);
+    c.translate(p.x, p.y);
+    c.scale(obj.flipH ? -1 : 1, obj.flipV ? -1 : 1);
+    c.translate(-p.x, -p.y);
+  }
+
+  const strokeC = obj.strokeColor || state.strokeColor;
+  const strokeW = (obj.strokeWidth || state.strokeWidth) * state.zoom;
+  const strokeS = obj.strokeStyle || state.strokeStyle;
+  const fillC = obj.fillColor || state.fillColor;
+  const fillA = obj.fillAlpha !== undefined ? obj.fillAlpha : state.fillAlpha;
+
+  applyStrokeStyle(c, strokeS, strokeW);
+  c.strokeStyle = strokeC;
+  if (isSelected) {
+    c.shadowColor = strokeC;
+    c.shadowBlur = 8;
+  }
+
+  const p1 = toCanvas(obj.x, obj.y);
+
+  switch(obj.type) {
+    case 'line': {
+      const p2 = toCanvas(obj.x2, obj.y2);
+      c.beginPath(); c.moveTo(p1.x, p1.y); c.lineTo(p2.x, p2.y); c.stroke();
+      break;
+    }
+    case 'wire': {
+      const p2 = toCanvas(obj.x2, obj.y2);
+      c.beginPath(); c.moveTo(p1.x, p1.y);
+      c.lineTo(p2.x, p1.y); c.lineTo(p2.x, p2.y);
+      c.stroke();
+      // Dots at endpoints
+      c.fillStyle = strokeC; c.setLineDash([]);
+      c.beginPath(); c.arc(p1.x, p1.y, strokeW*1.5, 0, Math.PI*2); c.fill();
+      c.beginPath(); c.arc(p2.x, p2.y, strokeW*1.5, 0, Math.PI*2); c.fill();
+      break;
+    }
+    case 'arrow': {
+      const p2 = toCanvas(obj.x2, obj.y2);
+      const angle = Math.atan2(p2.y-p1.y, p2.x-p1.x);
+      const aLen = Math.max(10, strokeW*5);
+      c.beginPath(); c.moveTo(p1.x, p1.y); c.lineTo(p2.x, p2.y); c.stroke();
+      c.setLineDash([]); c.fillStyle = strokeC;
+      c.beginPath();
+      c.moveTo(p2.x, p2.y);
+      c.lineTo(p2.x - aLen*Math.cos(angle-0.4), p2.y - aLen*Math.sin(angle-0.4));
+      c.lineTo(p2.x - aLen*Math.cos(angle+0.4), p2.y - aLen*Math.sin(angle+0.4));
+      c.closePath(); c.fill();
+      break;
+    }
+    case 'rect': {
+      const pw = obj.w * state.zoom, ph = obj.h * state.zoom;
+      c.beginPath(); c.rect(p1.x, p1.y, pw, ph);
+      applyFill(c, obj, p1.x, p1.y, pw, ph);
+      c.strokeRect(p1.x, p1.y, pw, ph);
+      break;
+    }
+    case 'circle': {
+      const rx = Math.abs(obj.rx * state.zoom), ry = Math.abs(obj.ry * state.zoom);
+      const pcx = toCanvas(obj.cx, obj.cy);
+      c.beginPath(); c.ellipse(pcx.x, pcx.y, rx, ry, 0, 0, Math.PI*2);
+      applyFill(c, obj, pcx.x-rx, pcx.y-ry, rx*2, ry*2);
+      c.stroke();
+      break;
+    }
+    case 'triangle': {
+      const p2 = toCanvas(obj.x2, obj.y2);
+      const mid = (p1.x + p2.x) / 2;
+      c.beginPath(); c.moveTo(mid, p1.y); c.lineTo(p2.x, p2.y); c.lineTo(p1.x, p2.y); c.closePath();
+      applyFill(c, obj, Math.min(p1.x,p2.x), p1.y, Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y));
+      c.stroke(); break;
+    }
+    case 'polygon': {
+      if (obj.points && obj.points.length > 1) {
+        c.beginPath();
+        const pp0 = toCanvas(obj.points[0].x, obj.points[0].y);
+        c.moveTo(pp0.x, pp0.y);
+        for (let i = 1; i < obj.points.length; i++) {
+          const pp = toCanvas(obj.points[i].x, obj.points[i].y);
+          c.lineTo(pp.x, pp.y);
+        }
+        if (obj.closed) c.closePath();
+        if (obj.closed){
+          const xs=obj.points.map(p=>toCanvas(p.x,p.y).x), ys=obj.points.map(p=>toCanvas(p.x,p.y).y);
+          const bx=Math.min(...xs),by=Math.min(...ys),bw=Math.max(...xs)-bx,bh=Math.max(...ys)-by;
+          applyFill(c, obj, bx, by, bw, bh);
+        }
+        c.stroke();
+        // Point handles
+        if (isSelected) {
+          c.setLineDash([]); c.fillStyle = strokeC;
+          obj.points.forEach(pt => {
+            const pp = toCanvas(pt.x, pt.y);
+            c.beginPath(); c.arc(pp.x, pp.y, 4, 0, Math.PI*2); c.fill();
+          });
+        }
+      }
+      break;
+    }
+    case 'bezier': {
+      if (obj.points && obj.points.length >= 4) {
+        c.beginPath();
+        const pp0 = toCanvas(obj.points[0].x, obj.points[0].y);
+        c.moveTo(pp0.x, pp0.y);
+        for (let i = 1; i+2 < obj.points.length; i += 3) {
+          const cp1 = toCanvas(obj.points[i].x, obj.points[i].y);
+          const cp2 = toCanvas(obj.points[i+1].x, obj.points[i+1].y);
+          const ep = toCanvas(obj.points[i+2].x, obj.points[i+2].y);
+          c.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, ep.x, ep.y);
+        }
+        c.stroke();
+        if (isSelected) {
+          c.setLineDash([3,3]); c.strokeStyle = getComputedStyle(document.body).getPropertyValue('--muted').trim();
+          c.lineWidth = 1;
+          for (let i = 0; i+2 < obj.points.length; i += 3) {
+            const a = toCanvas(obj.points[i].x, obj.points[i].y);
+            const b = toCanvas(obj.points[i+1].x, obj.points[i+1].y);
+            const c2 = toCanvas(obj.points[i+2].x, obj.points[i+2].y);
+            const d = toCanvas(obj.points[Math.min(i+3, obj.points.length-1)].x, obj.points[Math.min(i+3, obj.points.length-1)].y);
+            c.beginPath(); c.moveTo(a.x,a.y); c.lineTo(b.x,b.y); c.stroke();
+            c.beginPath(); c.moveTo(c2.x,c2.y); c.lineTo(d.x,d.y); c.stroke();
+          }
+          c.setLineDash([]); c.fillStyle = strokeC;
+          obj.points.forEach((pt,i) => {
+            const pp = toCanvas(pt.x, pt.y);
+            c.beginPath(); c.arc(pp.x, pp.y, i%3===0?5:3, 0, Math.PI*2);
+            c.fillStyle = i%3===0 ? strokeC : '#ffbe0b';
+            c.fill();
+          });
+        }
+      }
+      break;
+    }
+    case 'text': {
+      const fw = obj.fontBold ? 'bold ' : '';
+      const ff = obj.fontFamily || 'Share Tech Mono';
+      const fs = (obj.fontSize || 14) * state.zoom;
+      c.font = `${fw}${fs}px "${ff}", monospace`;
+      c.fillStyle = strokeC;
+      c.textBaseline = 'top';
+      const lines = (obj.text||'').split('\n');
+      lines.forEach((ln, i) => c.fillText(ln, p1.x, p1.y + i * fs * 1.3));
+      break;
+    }
+    case 'label': {
+      const fw = obj.fontBold ? 'bold ' : '';
+      const ff = obj.fontFamily || 'Share Tech Mono';
+      const fs = (obj.fontSize || 12) * state.zoom;
+      c.font = `${fw}${fs}px "${ff}", monospace`;
+      const lines = (obj.text||'').split('\n');
+      const lw = Math.max(...lines.map(l => c.measureText(l).width));
+      const lh = lines.length * fs * 1.4;
+      const pad = 8 * state.zoom;
+      const bw = lw + pad*2, bh = lh + pad*2;
+      if (fillA > 0) {
+        c.globalAlpha = fillA/100; c.fillStyle = fillC;
+        c.fillRect(p1.x, p1.y, bw, bh); c.globalAlpha = 1;
+      }
+      c.strokeRect(p1.x, p1.y, bw, bh);
+      c.fillStyle = strokeC; c.textBaseline = 'top';
+      lines.forEach((ln, i) => c.fillText(ln, p1.x+pad, p1.y+pad + i*fs*1.4));
+      break;
+    }
+    case 'dim': {
+      const p2 = toCanvas(obj.x2, obj.y2);
+      const dist = Math.round(Math.hypot(obj.x2-obj.x, obj.y2-obj.y));
+      const midX = (p1.x+p2.x)/2, midY = (p1.y+p2.y)/2;
+      const angle = Math.atan2(p2.y-p1.y, p2.x-p1.x);
+      const off = 20;
+      const nx = -Math.sin(angle)*off, ny = Math.cos(angle)*off;
+      c.strokeStyle = getComputedStyle(document.body).getPropertyValue('--warn').trim() || '#ffbe0b';
+      c.setLineDash([4,3]); c.lineWidth = 1*state.zoom;
+      c.beginPath(); c.moveTo(p1.x, p1.y); c.lineTo(p1.x+nx, p1.y+ny); c.stroke();
+      c.beginPath(); c.moveTo(p2.x, p2.y); c.lineTo(p2.x+nx, p2.y+ny); c.stroke();
+      c.setLineDash([]); c.lineWidth = 1.5*state.zoom;
+      c.beginPath(); c.moveTo(p1.x+nx, p1.y+ny); c.lineTo(p2.x+nx, p2.y+ny); c.stroke();
+      // Arrows
+      const aLen = 8*state.zoom;
+      c.fillStyle = c.strokeStyle;
+      [[p1.x+nx, p1.y+ny, angle],[p2.x+nx, p2.y+ny, angle+Math.PI]].forEach(([ax,ay,an])=>{
+        c.beginPath(); c.moveTo(ax,ay);
+        c.lineTo(ax+aLen*Math.cos(an+0.4), ay+aLen*Math.sin(an+0.4));
+        c.lineTo(ax+aLen*Math.cos(an-0.4), ay+aLen*Math.sin(an-0.4));
+        c.closePath(); c.fill();
+      });
+      c.font = `bold ${11*state.zoom}px "Share Tech Mono",monospace`;
+      c.fillStyle = c.strokeStyle; c.textAlign = 'center'; c.textBaseline = 'bottom';
+      c.fillText(dist+'px', midX+nx, midY+ny-3*state.zoom);
+      c.textAlign = 'left';
+      break;
+    }
+    case 'measure': {
+      const p2 = toCanvas(obj.x2, obj.y2);
+      const dist = Math.round(Math.hypot(obj.x2-obj.x, obj.y2-obj.y));
+      const midX = (p1.x+p2.x)/2, midY = (p1.y+p2.y)/2;
+      c.strokeStyle = '#ff00ff'; c.setLineDash([5,3]); c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(p1.x,p1.y); c.lineTo(p2.x,p2.y); c.stroke();
+      c.setLineDash([]);
+      c.fillStyle = '#ff00ff'; c.font = `10px "Share Tech Mono",monospace`;
+      c.textAlign = 'center'; c.fillText(`~${dist}px`, midX, midY-8); c.textAlign='left';
+      break;
+    }
+    case 'note': {
+      const pw = (obj.w||160)*state.zoom, ph = (obj.h||100)*state.zoom;
+      c.fillStyle = '#1a1200'; c.globalAlpha = 0.9;
+      c.fillRect(p1.x, p1.y, pw, ph); c.globalAlpha = 1;
+      c.strokeStyle = getComputedStyle(document.body).getPropertyValue('--warn').trim() || '#ffbe0b';
+      c.setLineDash([]); c.lineWidth = 1.5*state.zoom;
+      c.strokeRect(p1.x, p1.y, pw, ph);
+      // Fold corner
+      const fold = 16*state.zoom;
+      c.beginPath(); c.moveTo(p1.x+pw-fold, p1.y); c.lineTo(p1.x+pw, p1.y+fold); c.stroke();
+      c.font = `bold ${11*state.zoom}px "Share Tech Mono",monospace`;
+      c.fillStyle = c.strokeStyle;
+      c.fillText(obj.title||'NOTE', p1.x+8*state.zoom, p1.y+16*state.zoom);
+      c.font = `${10*state.zoom}px "Share Tech Mono",monospace`;
+      c.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#e2f4ff';
+      (obj.body||'').split('\n').forEach((ln,i) => c.fillText(ln, p1.x+8*state.zoom, p1.y+(30+i*14)*state.zoom));
+      break;
+    }
+    case 'group': {
+      if (isSelected) {
+        c.strokeStyle = getComputedStyle(document.body).getPropertyValue('--accent2').trim() || '#7c3aed';
+        c.setLineDash([6,3]); c.lineWidth = 1.5;
+        const bb = getGroupBB(obj);
+        const bbc = toCanvas(bb.x, bb.y);
+        c.strokeRect(bbc.x-4, bbc.y-4, bb.w*state.zoom+8, bb.h*state.zoom+8);
+      }
+      (obj.children||[]).forEach(child => drawObject(c, child, false));
+      break;
+    }
+  }
+  c.shadowBlur = 0;
+  c.restore();
+}
+
+function getGroupBB(obj) {
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  (obj.children||[]).forEach(ch => {
+    const bb = getObjBB(ch);
+    if(bb.x<minX)minX=bb.x; if(bb.y<minY)minY=bb.y;
+    if(bb.x+bb.w>maxX)maxX=bb.x+bb.w; if(bb.y+bb.h>maxY)maxY=bb.y+bb.h;
+  });
+  return {x:minX,y:minY,w:maxX-minX,h:maxY-minY};
+}
+
+function getObjBB(obj) {
+  switch(obj.type) {
+    case 'line': case 'wire': case 'arrow': case 'dim': case 'measure':
+      return { x:Math.min(obj.x,obj.x2), y:Math.min(obj.y,obj.y2), w:Math.abs(obj.x2-obj.x), h:Math.abs(obj.y2-obj.y) };
+    case 'circle':
+      return { x:obj.cx-obj.rx, y:obj.cy-obj.ry, w:obj.rx*2, h:obj.ry*2 };
+    case 'triangle':
+      return { x:Math.min(obj.x,obj.x2), y:Math.min(obj.y,obj.y2), w:Math.abs(obj.x2-obj.x), h:Math.abs(obj.y2-obj.y) };
+    case 'polygon': case 'bezier':
+      if(obj.points&&obj.points.length>0){
+        const xs=obj.points.map(p=>p.x), ys=obj.points.map(p=>p.y);
+        const minX=Math.min(...xs),minY=Math.min(...ys);
+        return {x:minX,y:minY,w:Math.max(...xs)-minX,h:Math.max(...ys)-minY};
+      }
+      return {x:obj.x,y:obj.y,w:0,h:0};
+    case 'text':
+      return { x:obj.x, y:obj.y, w:100, h:20 };
+    case 'label': case 'note':
+      return { x:obj.x, y:obj.y, w:obj.w||160, h:obj.h||100 };
+    case 'group':
+      return getGroupBB(obj);
+    default:
+      return { x:obj.x||0, y:obj.y||0, w:obj.w||0, h:obj.h||0 };
+  }
+}
+
+// ============================================================
+// MAIN DRAW
+// ============================================================
+function drawAll() {
+  if (!canvasArea || !ctx || !gctx) return;
+  const w = mainCanvas.clientWidth || (canvasArea.clientWidth - 20);
+  const h = mainCanvas.clientHeight || (canvasArea.clientHeight - 20);
+  // Re-apply DPR scale (setTransform resets any accidental changes)
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  gctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  drawGrid();
+
+  // Sort by z-order
+  const sorted = [...state.objects].sort((a,b)=>(a.z||0)-(b.z||0));
+
+  sorted.forEach(obj => {
+    const isSelected = state.selected.includes(obj.id);
+    drawObject(ctx, obj, isSelected);
+  });
+
+  // Preview while drawing
+  if (drawing && drawStart) {
+    ctx.save();
+    ctx.globalAlpha = 0.7;
+    const previewColor = state.strokeColor;
+    ctx.strokeStyle = previewColor;
+    applyStrokeStyle(ctx, state.strokeStyle, state.strokeWidth * state.zoom);
+    ctx.shadowColor = previewColor; ctx.shadowBlur = 6;
+
+    const ps = toCanvas(drawStart.x, drawStart.y);
+    const pc = drawCurrent ? toCanvas(drawCurrent.x, drawCurrent.y) : ps;
+
+    switch(state.tool) {
+      case 'line': ctx.beginPath(); ctx.moveTo(ps.x,ps.y); ctx.lineTo(pc.x,pc.y); ctx.stroke(); break;
+      case 'wire':
+        ctx.beginPath(); ctx.moveTo(ps.x,ps.y); ctx.lineTo(pc.x,ps.y); ctx.lineTo(pc.x,pc.y); ctx.stroke(); break;
+      case 'arrow': {
+        ctx.beginPath(); ctx.moveTo(ps.x,ps.y); ctx.lineTo(pc.x,pc.y); ctx.stroke();
+        const angle = Math.atan2(pc.y-ps.y, pc.x-ps.x);
+        const aLen = 14;
+        ctx.setLineDash([]); ctx.fillStyle = previewColor;
+        ctx.beginPath();
+        ctx.moveTo(pc.x,pc.y);
+        ctx.lineTo(pc.x-aLen*Math.cos(angle-0.4), pc.y-aLen*Math.sin(angle-0.4));
+        ctx.lineTo(pc.x-aLen*Math.cos(angle+0.4), pc.y-aLen*Math.sin(angle+0.4));
+        ctx.closePath(); ctx.fill(); break;
+      }
+      case 'rect': {
+        const rx=Math.min(ps.x,pc.x), ry=Math.min(ps.y,pc.y);
+        const rw=Math.abs(pc.x-ps.x), rh=Math.abs(pc.y-ps.y);
+        ctx.strokeRect(rx,ry,rw,rh); break;
+      }
+      case 'circle': {
+        const rx=Math.abs(pc.x-ps.x)/2, ry=Math.abs(pc.y-ps.y)/2;
+        const cx=(ps.x+pc.x)/2, cy=(ps.y+pc.y)/2;
+        ctx.beginPath(); ctx.ellipse(cx,cy,Math.max(1,rx),Math.max(1,ry),0,0,Math.PI*2); ctx.stroke(); break;
+      }
+      case 'triangle': {
+        const mid=(ps.x+pc.x)/2;
+        ctx.beginPath(); ctx.moveTo(mid,ps.y); ctx.lineTo(pc.x,pc.y); ctx.lineTo(ps.x,pc.y); ctx.closePath(); ctx.stroke(); break;
+      }
+      case 'polygon': case 'bezier':
+        if (drawPoints.length > 0) {
+          const pp0 = toCanvas(drawPoints[0].x, drawPoints[0].y);
+          ctx.beginPath(); ctx.moveTo(pp0.x,pp0.y);
+          drawPoints.slice(1).forEach(pt => { const pp=toCanvas(pt.x,pt.y); ctx.lineTo(pp.x,pp.y); });
+          ctx.lineTo(pc.x,pc.y); ctx.stroke();
+          drawPoints.forEach(pt => {
+            const pp=toCanvas(pt.x,pt.y);
+            ctx.setLineDash([]); ctx.fillStyle=previewColor;
+            ctx.beginPath(); ctx.arc(pp.x,pp.y,4,0,Math.PI*2); ctx.fill();
+          });
+        }
+        break;
+      case 'dim': {
+        const dist = Math.round(Math.hypot(drawCurrent.x-drawStart.x, drawCurrent.y-drawStart.y));
+        const off=20, angle2=Math.atan2(pc.y-ps.y,pc.x-ps.x);
+        const nx=-Math.sin(angle2)*off,ny=Math.cos(angle2)*off;
+        ctx.strokeStyle='#ffbe0b'; ctx.setLineDash([4,3]);
+        ctx.beginPath();ctx.moveTo(ps.x+nx,ps.y+ny);ctx.lineTo(pc.x+nx,pc.y+ny);ctx.stroke();
+        ctx.font=`bold ${11}px "Share Tech Mono",monospace`;
+        ctx.fillStyle='#ffbe0b'; ctx.textAlign='center';
+        ctx.fillText(dist+'px',(ps.x+pc.x)/2+nx,(ps.y+pc.y)/2+ny-6);
+        ctx.textAlign='left'; break;
+      }
+    }
+    ctx.restore();
+  }
+
+  // Selection box
+  if (selBox) {
+    ctx.save();
+    ctx.strokeStyle = state.strokeColor;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.globalAlpha = 0.7;
+    const sx=Math.min(selBox.x1,selBox.x2), sy=Math.min(selBox.y1,selBox.y2);
+    const sw=Math.abs(selBox.x2-selBox.x1), sh=Math.abs(selBox.y2-selBox.y1);
+    const sp=toCanvas(sx,sy);
+    ctx.strokeRect(sp.x,sp.y,sw*state.zoom,sh*state.zoom);
+    ctx.fillStyle=state.strokeColor; ctx.globalAlpha=0.08;
+    ctx.fillRect(sp.x,sp.y,sw*state.zoom,sh*state.zoom);
+    ctx.restore();
+  }
+
+  document.getElementById('zoom-label').textContent = Math.round(state.zoom*100)+'%';
+  document.getElementById('st-objects').textContent = state.objects.length + ' ' + t('objects');
+  if(state.selected.length>0)
+    document.getElementById('st-selected').textContent = state.selected.length + ' sel.';
+  else
+    document.getElementById('st-selected').textContent = '—';
+}
+
+// ============================================================
+// HIT TEST
+// ============================================================
+function hitTest(obj, wx, wy) {
+  const tol = 8 / state.zoom;
+  switch(obj.type) {
+    case 'line': case 'wire': case 'arrow': case 'dim': case 'measure': {
+      const d = distToSegment(wx,wy, obj.x,obj.y, obj.x2,obj.y2);
+      return d < tol;
+    }
+    case 'rect': {
+      const x2=obj.x+obj.w, y2=obj.y+obj.h;
+      if (wx>=obj.x&&wx<=x2&&wy>=obj.y&&wy<=y2) return true;
+      return distToSegment(wx,wy,obj.x,obj.y,x2,obj.y)<tol ||
+             distToSegment(wx,wy,x2,obj.y,x2,y2)<tol ||
+             distToSegment(wx,wy,x2,y2,obj.x,y2)<tol ||
+             distToSegment(wx,wy,obj.x,y2,obj.x,obj.y)<tol;
+    }
+    case 'circle': {
+      const dx=wx-obj.cx, dy=wy-obj.cy;
+      const d = Math.hypot(dx/obj.rx, dy/obj.ry);
+      return Math.abs(d-1)*Math.min(obj.rx,obj.ry) < tol*2;
+    }
+    case 'triangle': {
+      const mid=(obj.x+obj.x2)/2;
+      const pts=[[mid,obj.y],[obj.x2,obj.y2],[obj.x,obj.y2]];
+      return pointInPoly(wx,wy,pts) || pts.some((_,i)=>distToSegment(wx,wy,...pts[i],...pts[(i+1)%3])<tol);
+    }
+    case 'polygon': case 'bezier': {
+      if (!obj.points||obj.points.length<2) return false;
+      for (let i=0;i<obj.points.length-1;i++) {
+        if(distToSegment(wx,wy,obj.points[i].x,obj.points[i].y,obj.points[i+1].x,obj.points[i+1].y)<tol) return true;
+      }
+      return false;
+    }
+    case 'text': {
+      return wx>=obj.x&&wx<=obj.x+120&&wy>=obj.y&&wy<=obj.y+30;
+    }
+    case 'label': case 'note': {
+      return wx>=obj.x&&wx<=obj.x+(obj.w||160)&&wy>=obj.y&&wy<=obj.y+(obj.h||100);
+    }
+    case 'group': {
+      return (obj.children||[]).some(ch=>hitTest(ch,wx,wy));
+    }
+    default: {
+      const bb=getObjBB(obj);
+      return wx>=bb.x&&wx<=bb.x+bb.w&&wy>=bb.y&&wy<=bb.y+bb.h;
+    }
+  }
+}
+
+function distToSegment(px,py,ax,ay,bx,by) {
+  const dx=bx-ax,dy=by-ay,len2=dx*dx+dy*dy;
+  if(len2===0)return Math.hypot(px-ax,py-ay);
+  const t=Math.max(0,Math.min(1,((px-ax)*dx+(py-ay)*dy)/len2));
+  return Math.hypot(px-ax-t*dx,py-ay-t*dy);
+}
+function pointInPoly(px,py,pts) {
+  let inside=false;
+  for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+    const [xi,yi]=pts[i],[xj,yj]=pts[j];
+    if(((yi>py)!==(yj>py))&&(px<(xj-xi)*(py-yi)/(yj-yi)+xi)) inside=!inside;
+  }
+  return inside;
+}
+
+// ============================================================
+// POINTER EVENTS
+// ============================================================
+function onDown(e) {
+  if(e.button===1){panning=true;panStart={x:e.clientX,y:e.clientY,px:state.panX,py:state.panY};return;}
+  const {cx,cy,x,y}=getCanvasPos(e);
+  const sx=snap(x), sy=snap(y);
+  closeCtxMenu();
+
+  if(state.tool==='pan'||(e.button===0&&e.altKey)){
+    panning=true; panStart={x:e.clientX,y:e.clientY,px:state.panX,py:state.panY}; return;
+  }
+  if(state.tool==='zoom'){
+    if(e.shiftKey) setZoom(state.zoom/1.3,cx,cy); else setZoom(state.zoom*1.3,cx,cy); return;
+  }
+  if(state.tool==='eraser') {
+    const hit = [...state.objects].reverse().find(o=>hitTest(o,x,y));
+    if(hit){saveUndo();state.objects=state.objects.filter(o=>o.id!==hit.id);state.selected=[];drawAll();}
+    return;
+  }
+
+  if(state.tool==='select'||state.tool==='pointer'){
+    const hit = [...state.objects].reverse().find(o=>hitTest(o,x,y));
+    if(hit){
+      if(e.shiftKey){
+        state.selected=state.selected.includes(hit.id)?state.selected.filter(i=>i!==hit.id):[...state.selected,hit.id];
+      } else {
+        if(!state.selected.includes(hit.id)) state.selected=[hit.id];
+      }
+      dragObj={objs:state.selected.map(id=>({id,ox:state.objects.find(o=>o.id===id)?.x||0,oy:state.objects.find(o=>o.id===id)?.y||0})
+      ),startX:x,startY:y};
+      dragging=true;
+      saveUndo();
+    } else {
+      state.selected=[];
+      selBox={x1:x,y1:y,x2:x,y2:y};
+    }
+    updatePropPanel();
+    drawAll(); return;
+  }
+
+  if(state.tool==='text'){
+    textPending={x:sx,y:sy};
+    document.getElementById('text-modal').classList.add('visible');
+    return;
+  }
+  if(state.tool==='label'){
+    textPending={x:sx,y:sy,isLabel:true};
+    document.getElementById('text-modal').classList.add('visible');
+    return;
+  }
+  if(state.tool==='note'){
+    notePending={x:sx,y:sy};
+    document.getElementById('note-modal').classList.add('visible');
+    return;
+  }
+  if(state.tool==='measure'){
+    if(!measureStart){measureStart={x:sx,y:sy};}
+    else{
+      addObject({type:'measure',x:measureStart.x,y:measureStart.y,x2:sx,y2:sy});
+      measureStart=null;
+    }
+    return;
+  }
+  if(state.tool==='dim'){
+    drawStart={x:sx,y:sy}; drawCurrent={x:sx,y:sy}; drawing=true; return;
+  }
+  if(state.tool==='polygon'||state.tool==='bezier'){
+    if(!drawing){
+      drawing=true; drawStart={x:sx,y:sy}; drawPoints=[{x:sx,y:sy}]; drawCurrent={x:sx,y:sy};
+    } else {
+      drawPoints.push({x:sx,y:sy}); drawCurrent={x:sx,y:sy};
+    }
+    return;
+  }
+
+  // All other line-like tools
+  drawing=true; drawStart={x:sx,y:sy}; drawCurrent={x:sx,y:sy};
+}
+
+function onMove(e) {
+  const {cx,cy,x,y}=getCanvasPos(e);
+  const sx=snap(x), sy=snap(y);
+  state.mouse={x:sx,y:sy};
+  document.getElementById('st-pos').textContent=`X: ${Math.round(sx)}  Y: ${Math.round(sy)}`;
+
+  if(panning){
+    state.panX=panStart.px+(e.clientX-panStart.x);
+    state.panY=panStart.py+(e.clientY-panStart.y);
+    drawAll(); return;
+  }
+  if(dragging&&dragObj){
+    const dx=x-dragObj.startX, dy=y-dragObj.startY;
+    dragObj.objs.forEach(({id,ox,oy})=>{
+      const obj=state.objects.find(o=>o.id===id); if(!obj)return;
+      const nx=snap(ox+dx), ny=snap(oy+dy);
+      moveObj(obj,nx-obj.x,ny-obj.y);
+    });
+    drawAll(); return;
+  }
+  if(selBox){
+    selBox.x2=x; selBox.y2=y;
+    // live selection
+    const sx1=Math.min(selBox.x1,selBox.x2),sy1=Math.min(selBox.y1,selBox.y2);
+    const sx2=Math.max(selBox.x1,selBox.x2),sy2=Math.max(selBox.y1,selBox.y2);
+    state.selected=state.objects.filter(o=>{
+      const bb=getObjBB(o);
+      return bb.x>=sx1&&bb.y>=sy1&&bb.x+bb.w<=sx2&&bb.y+bb.h<=sy2;
+    }).map(o=>o.id);
+    drawAll(); return;
+  }
+  if(drawing){
+    drawCurrent={x:sx,y:sy};
+    drawAll();
+  }
+
+  // measure crosshair
+  if(measureStart){
+    const mb=document.getElementById('measure-badge');
+    const dist=Math.round(Math.hypot(sx-measureStart.x, sy-measureStart.y));
+    mb.style.display='block';
+    mb.style.left=e.clientX+16+'px'; mb.style.top=e.clientY-20+'px';
+    mb.textContent='~'+dist+'px';
+  }
+}
+
+function onUp(e) {
+  if(e.button===1){panning=false;return;}
+  if(panning){panning=false;return;}
+  if(dragging){dragging=false;dragObj=null;drawAll();return;}
+  if(selBox){selBox=null;updatePropPanel();drawAll();return;}
+  if(!drawing)return;
+
+  const {x,y}=getCanvasPos(e);
+  const sx=snap(x),sy=snap(y);
+
+  if(state.tool==='polygon'||state.tool==='bezier') return; // handled on dblclick
+
+  let newObj=null;
+  switch(state.tool){
+    case 'line':  newObj={type:'line',x:drawStart.x,y:drawStart.y,x2:sx,y2:sy}; break;
+    case 'wire':  newObj={type:'wire',x:drawStart.x,y:drawStart.y,x2:sx,y2:sy}; break;
+    case 'arrow': newObj={type:'arrow',x:drawStart.x,y:drawStart.y,x2:sx,y2:sy}; break;
+    case 'dim':   newObj={type:'dim',x:drawStart.x,y:drawStart.y,x2:sx,y2:sy}; break;
+    case 'rect': {
+      const rx=Math.min(drawStart.x,sx),ry=Math.min(drawStart.y,sy);
+      newObj={type:'rect',x:rx,y:ry,w:Math.abs(sx-drawStart.x),h:Math.abs(sy-drawStart.y)}; break;
+    }
+    case 'circle': {
+      newObj={type:'circle',cx:(drawStart.x+sx)/2,cy:(drawStart.y+sy)/2,
+        x:(drawStart.x+sx)/2,y:(drawStart.y+sy)/2,
+        rx:Math.abs(sx-drawStart.x)/2,ry:Math.abs(sy-drawStart.y)/2}; break;
+    }
+    case 'triangle': {
+      newObj={type:'triangle',x:Math.min(drawStart.x,sx),y:Math.min(drawStart.y,sy),x2:Math.max(drawStart.x,sx),y2:Math.max(drawStart.y,sy)}; break;
+    }
+  }
+
+  if(newObj) {
+    // Special check for circle - use rx/ry
+    if(newObj.type==='circle') {
+      if(newObj.rx > 2 || newObj.ry > 2) addObject(newObj);
+    } else {
+      const dist = Math.hypot((newObj.x2!==undefined?newObj.x2:newObj.x)-(newObj.x||0),(newObj.y2!==undefined?newObj.y2:newObj.y)-(newObj.y||0));
+      const area = (newObj.w||0)*(newObj.h||0);
+      if(dist>4||area>16) addObject(newObj);
+    }
+  }
+
+  drawing=false; drawStart=null; drawCurrent=null;
+  drawAll();
+}
+
+function onDblClick(e) {
+  if(state.tool==='polygon'||state.tool==='bezier'){
+    if(drawPoints.length>=2){
+      let newObj;
+      if(state.tool==='polygon') newObj={type:'polygon',x:drawPoints[0].x,y:drawPoints[0].y,points:[...drawPoints],closed:true};
+      else {
+        // Make bezier points: each segment needs anchor+2 controls
+        const pts=[];
+        for(let i=0;i<drawPoints.length;i++){
+          pts.push(drawPoints[i]);
+          if(i<drawPoints.length-1){
+            const mx=(drawPoints[i].x+drawPoints[i+1].x)/2;
+            const my=(drawPoints[i].y+drawPoints[i+1].y)/2;
+            pts.push({x:drawPoints[i].x+(mx-drawPoints[i].x)*0.5,y:drawPoints[i].y+(my-drawPoints[i].y)*0.5-30});
+            pts.push({x:mx+(drawPoints[i+1].x-mx)*0.5,y:my+(drawPoints[i+1].y-my)*0.5-30});
+          }
+        }
+        newObj={type:'bezier',x:drawPoints[0].x,y:drawPoints[0].y,points:pts};
+      }
+      addObject(newObj);
+    }
+    drawing=false; drawStart=null; drawCurrent=null; drawPoints=[];
+    drawAll();
+  }
+}
+
+function onWheel(e){
+  e.preventDefault();
+  const {cx,cy}=getCanvasPos(e);
+  const factor = e.deltaY>0?0.9:1.1;
+  setZoom(state.zoom*factor,cx,cy);
+}
+function onContextMenu(e){
+  e.preventDefault();
+  const {x,y}=getCanvasPos(e);
+  const hit=[...state.objects].reverse().find(o=>hitTest(o,x,y));
+  if(hit&&!state.selected.includes(hit.id)) state.selected=[hit.id];
+  showCtxMenu(e.clientX,e.clientY);
+  drawAll();
+}
+
+function moveObj(obj,dx,dy){
+  switch(obj.type){
+    case 'circle': obj.cx+=dx; obj.cy+=dy; obj.x=obj.cx; obj.y=obj.cy; break;
+    case 'line': case 'wire': case 'arrow': case 'dim': case 'measure':
+      obj.x+=dx; obj.y+=dy; obj.x2+=dx; obj.y2+=dy; break;
+    case 'polygon': case 'bezier':
+      if(obj.points) obj.points=obj.points.map(p=>({x:p.x+dx,y:p.y+dy}));
+      obj.x+=dx; obj.y+=dy; break;
+    case 'group':
+      (obj.children||[]).forEach(ch=>moveObj(ch,dx,dy));
+      obj.x+=dx; obj.y+=dy; break;
+    default:
+      obj.x+=dx; obj.y+=dy;
+  }
+}
+
+// ============================================================
+// TOUCH HANDLERS
+// ============================================================
+let lastTouchDist = 0;
+let lastTouchMid = null;
+
+function onTouchStart(e) {
+  e.preventDefault();
+  if (e.touches.length === 2) {
+    const t0 = e.touches[0], t1 = e.touches[1];
+    lastTouchDist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+    lastTouchMid = { x: (t0.clientX + t1.clientX) / 2, y: (t0.clientY + t1.clientY) / 2 };
+    return;
+  }
+  const t = e.touches[0];
+  onDown({ clientX: t.clientX, clientY: t.clientY, button: 0, shiftKey: false, altKey: false, touches: e.touches });
+}
+
+function onTouchMove(e) {
+  e.preventDefault();
+  if (e.touches.length === 2) {
+    const t0 = e.touches[0], t1 = e.touches[1];
+    const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+    const mid = { x: (t0.clientX + t1.clientX) / 2, y: (t0.clientY + t1.clientY) / 2 };
+    const r = mainCanvas.getBoundingClientRect();
+    if (lastTouchDist > 0) {
+      setZoom(state.zoom * (dist / lastTouchDist), mid.x - r.left, mid.y - r.top);
+    }
+    if (lastTouchMid) {
+      state.panX += mid.x - lastTouchMid.x;
+      state.panY += mid.y - lastTouchMid.y;
+      drawAll();
+    }
+    lastTouchDist = dist;
+    lastTouchMid = mid;
+    return;
+  }
+  const t = e.touches[0];
+  onMove({ clientX: t.clientX, clientY: t.clientY, touches: e.touches });
+}
+
+function onTouchEnd(e) {
+  e.preventDefault();
+  lastTouchDist = 0; lastTouchMid = null;
+  if (e.changedTouches.length > 0) {
+    const t = e.changedTouches[0];
+    onUp({ clientX: t.clientX, clientY: t.clientY, button: 0, touches: [] });
+  }
+}
+
+// ============================================================
+// KEYBOARD
+// ============================================================
+function onKeyDown(e){
+  const tag=e.target.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+
+  if(e.ctrlKey||e.metaKey){
+    switch(e.key.toLowerCase()){
+      case 'z': e.preventDefault(); e.shiftKey?redo():undo(); return;
+      case 'y': e.preventDefault(); redo(); return;
+      case 'a': e.preventDefault(); selectAll(); return;
+      case 'd': e.preventDefault(); duplicateSelected(); return;
+      case 'g': e.preventDefault(); e.shiftKey?ungroupSelected():groupSelected(); return;
+      case 's': e.preventDefault(); saveDocument(); return;
+      case 'n': e.preventDefault(); newDocument(); return;
+      case '+': case '=': e.preventDefault(); setZoom(state.zoom*1.2); return;
+      case '-': e.preventDefault(); setZoom(state.zoom/1.2); return;
+    }
+  }
+
+  switch(e.key){
+    case 'Delete': case 'Backspace': deleteSelected(); break;
+    case 'Escape': state.selected=[]; drawing=false; drawPoints=[]; drawStart=null; selBox=null; drawAll(); break;
+    case 'v': setTool('select'); break;
+    case 'a': setTool('pointer'); break;
+    case 'l': setTool('line'); break;
+    case 'w': setTool('wire'); break;
+    case 'r': setTool('rect'); break;
+    case 'e': setTool('circle'); break;
+    case 't': setTool('triangle'); break;
+    case 'p': setTool('polygon'); break;
+    case 'b': setTool('bezier'); break;
+    case 'x': setTool('text'); break;
+    case 'k': setTool('label'); break;
+    case 'd': setTool('dim'); break;
+    case 'm': setTool('measure'); break;
+    case 'n': setTool('note'); break;
+    case 'z': setTool('zoom'); break;
+    case ' ': e.preventDefault(); setTool(state.tool==='pan'?'select':'pan'); break;
+    case 'g': toggleGrid(); break;
+    case 's': toggleSnap(); break;
+    case ']': bringToFront(); break;
+    case '[': sendToBack(); break;
+    case 'h': flipH(); break;
+  }
+}
+
+// ============================================================
+// TOOLS
+// ============================================================
+function setTool(t_){
+  state.tool=t_;
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('tool-'+t_);
+  if(btn) btn.classList.add('active');
+  const L=LANGS[currentLang]||LANGS.uk;
+  const names={select:L.toolSelect,pointer:L.toolPointer,line:L.toolLine,wire:L.toolWire,arrow:L.toolArrow,
+    rect:L.toolRect,circle:L.toolCircle,triangle:L.toolTriangle,polygon:L.toolPolygon,bezier:L.toolBezier,
+    text:L.toolText,label:L.toolLabel,dim:L.toolDim,eraser:L.toolEraser,pan:L.toolPan,zoom:L.toolZoom,
+    measure:L.toolMeasure,note:L.toolNote};
+  document.getElementById('st-tool').textContent=names[t_]||t_.toUpperCase();
+  mainCanvas.style.cursor=t_==='pan'?'grab':t_==='zoom'?'zoom-in':t_==='eraser'?'cell':'crosshair';
+  drawing=false; drawStart=null; drawPoints=[];
+  measureStart=null; document.getElementById('measure-badge').style.display='none';
+}
+
+// ============================================================
+// OBJECTS
+// ============================================================
+function addObject(obj){
+  saveUndo();
+  obj.id=objId++;
+  obj.z=state.objects.length;
+  obj.layer=state.activeLayer;
+  obj.visible=true;
+  obj.opacity=1;
+  obj.strokeColor=state.strokeColor;
+  obj.strokeWidth=state.strokeWidth;
+  obj.strokeStyle=state.strokeStyle;
+  obj.fillColor=state.fillColor;
+  obj.fillColor2=state.fillColor2;
+  obj.fillType=state.fillType;
+  obj.fillAlpha=state.fillAlpha;
+  obj.hatchSize=state.hatchSize;
+  obj.hatchW=state.hatchW;
+  obj.fontFamily=state.fontFamily;
+  obj.fontSize=state.fontSize;
+  obj.fontBold=state.fontBold;
+  state.objects.push(obj);
+  state.selected=[obj.id];
+  updatePropPanel();
+  drawAll();
+  updateStatusBar();
+}
+
+function deleteSelected(){
+  if(!state.selected.length)return;
+  saveUndo();
+  state.objects=state.objects.filter(o=>!state.selected.includes(o.id));
+  state.selected=[];
+  drawAll();
+}
+
+function duplicateSelected(){
+  if(!state.selected.length)return;
+  saveUndo();
+  const newSel=[];
+  state.selected.forEach(id=>{
+    const obj=state.objects.find(o=>o.id===id);
+    if(!obj)return;
+    const clone=JSON.parse(JSON.stringify(obj));
+    clone.id=objId++;
+    clone.x=(clone.x||0)+20; clone.y=(clone.y||0)+20;
+    if(clone.x2!==undefined){clone.x2+=20;clone.y2+=20;}
+    if(clone.cx!==undefined){clone.cx+=20;clone.cy+=20;}
+    if(clone.points)clone.points=clone.points.map(p=>({x:p.x+20,y:p.y+20}));
+    state.objects.push(clone);
+    newSel.push(clone.id);
+  });
+  state.selected=newSel;
+  drawAll();
+}
+
+function selectAll(){ state.selected=state.objects.map(o=>o.id); updatePropPanel(); drawAll(); }
+
+function groupSelected(){
+  if(state.selected.length<2)return;
+  saveUndo();
+  const children=state.objects.filter(o=>state.selected.includes(o.id));
+  state.objects=state.objects.filter(o=>!state.selected.includes(o.id));
+  const bb=getGroupBB({children});
+  const grp={id:objId++,type:'group',x:bb.x,y:bb.y,children,layer:state.activeLayer,visible:true,opacity:1,z:state.objects.length};
+  state.objects.push(grp);
+  state.selected=[grp.id];
+  drawAll();
+}
+
+function ungroupSelected(){
+  saveUndo();
+  const newSel=[];
+  state.selected.forEach(id=>{
+    const idx=state.objects.findIndex(o=>o.id===id);
+    if(idx<0)return;
+    const obj=state.objects[idx];
+    if(obj.type==='group'){
+      state.objects.splice(idx,1,...(obj.children||[]));
+      newSel.push(...(obj.children||[]).map(c=>c.id));
+    }
+  });
+  state.selected=newSel;
+  drawAll();
+}
+
+function bringToFront(){
+  state.selected.forEach(id=>{
+    const obj=state.objects.find(o=>o.id===id);
+    if(obj) obj.z=(Math.max(...state.objects.map(o=>o.z||0))+1);
+  });
+  drawAll();
+}
+function sendToBack(){
+  state.selected.forEach(id=>{
+    const obj=state.objects.find(o=>o.id===id);
+    if(obj) obj.z=(Math.min(...state.objects.map(o=>o.z||0))-1);
+  });
+  drawAll();
+}
+function flipH(){
+  state.selected.forEach(id=>{
+    const obj=state.objects.find(o=>o.id===id);
+    if(obj) obj.flipH=!obj.flipH;
+  });
+  drawAll();
+}
+function flipV(){
+  state.selected.forEach(id=>{
+    const obj=state.objects.find(o=>o.id===id);
+    if(obj) obj.flipV=!obj.flipV;
+  });
+  drawAll();
+}
+
+// ============================================================
+// UNDO/REDO
+// ============================================================
+function saveUndo(){
+  state.undoStack.push(JSON.stringify({objects:state.objects,objId}));
+  if(state.undoStack.length>50) state.undoStack.shift();
+  state.redoStack=[];
+}
+function undo(){
+  if(!state.undoStack.length)return;
+  state.redoStack.push(JSON.stringify({objects:state.objects,objId}));
+  const s=JSON.parse(state.undoStack.pop());
+  state.objects=s.objects; objId=s.objId; state.selected=[];
+  drawAll();
+}
+function redo(){
+  if(!state.redoStack.length)return;
+  state.undoStack.push(JSON.stringify({objects:state.objects,objId}));
+  const s=JSON.parse(state.redoStack.pop());
+  state.objects=s.objects; objId=s.objId; state.selected=[];
+  drawAll();
+}
+
+// ============================================================
+// ZOOM
+// ============================================================
+function setZoom(z,cx,cy){
+  const oldZ=state.zoom;
+  state.zoom=Math.max(0.05,Math.min(20,z));
+  if(cx!==undefined&&cy!==undefined){
+    state.panX=cx-(cx-state.panX)*(state.zoom/oldZ);
+    state.panY=cy-(cy-state.panY)*(state.zoom/oldZ);
+  }
+  drawAll();
+}
+function zoomIn(){ const cw=mainCanvas.clientWidth||canvasArea.clientWidth-20, ch=mainCanvas.clientHeight||canvasArea.clientHeight-20; setZoom(state.zoom*1.25,cw/2,ch/2); }
+function zoomOut(){ const cw=mainCanvas.clientWidth||canvasArea.clientWidth-20, ch=mainCanvas.clientHeight||canvasArea.clientHeight-20; setZoom(state.zoom/1.25,cw/2,ch/2); }
+function zoomReset(){
+  const cw = mainCanvas.clientWidth || (canvasArea.clientWidth - 20);
+  const ch = mainCanvas.clientHeight || (canvasArea.clientHeight - 20);
+  state.zoom=Math.min(cw/state.pageW, ch/state.pageH)*0.9;
+  state.panX=(cw-state.pageW*state.zoom)/2;
+  state.panY=(ch-state.pageH*state.zoom)/2;
+  drawAll();
+}
+
+// ============================================================
+// LAYERS
+// ============================================================
+function renderLayers(){
+  const list=document.getElementById('layers-list');
+  list.innerHTML='';
+  [...state.layers].reverse().forEach(l=>{
+    const div=document.createElement('div');
+    div.className='layer-item'+(l.id===state.activeLayer?' active':'');
+
+    const vis=document.createElement('span');
+    vis.className='layer-vis '+(l.visible?'on':'');
+    vis.title='Видимість';
+    vis.textContent=l.visible?'👁':'○';
+    vis.onclick=e=>{e.stopPropagation();toggleLayerVis(l.id,e);};
+
+    const nameSpan=document.createElement('span');
+    nameSpan.className='layer-name';
+    nameSpan.textContent=l.name;
+    nameSpan.onclick=()=>setActiveLayer(l.id);
+    nameSpan.ondblclick=e=>{e.stopPropagation();startRenameLayer(l.id,nameSpan);};
+
+    const lock=document.createElement('span');
+    lock.className='layer-lock '+(l.locked?'on':'');
+    lock.title='Блокування';
+    lock.textContent=l.locked?'🔒':'○';
+    lock.onclick=e=>{e.stopPropagation();toggleLayerLock(l.id,e);};
+
+    const del=document.createElement('span');
+    del.className='layer-del';
+    del.title='Видалити шар';
+    del.textContent='✕';
+    del.onclick=e=>{e.stopPropagation();deleteLayer(l.id);};
+
+    div.appendChild(vis);
+    div.appendChild(nameSpan);
+    div.appendChild(lock);
+    div.appendChild(del);
+    list.appendChild(div);
+  });
+}
+function startRenameLayer(id, nameSpan){
+  const l=state.layers.find(x=>x.id===id); if(!l)return;
+  const inp=document.createElement('input');
+  inp.className='layer-rename-input';
+  inp.value=l.name;
+  nameSpan.replaceWith(inp);
+  inp.focus(); inp.select();
+  const commit=()=>{
+    const v=inp.value.trim();
+    if(v) l.name=v;
+    renderLayers();
+  };
+  inp.onblur=commit;
+  inp.onkeydown=e=>{
+    if(e.key==='Enter'){e.preventDefault();commit();}
+    if(e.key==='Escape'){e.preventDefault();renderLayers();}
+    e.stopPropagation();
+  };
+}
+function deleteLayer(id){
+  if(state.layers.length<=1) return; // нельзя удалить последний шар
+  // Переместить объекты этого шара на другой шар
+  const remaining=state.layers.filter(l=>l.id!==id);
+  const fallback=remaining[remaining.length-1].id;
+  state.objects.forEach(o=>{ if(o.layer===id) o.layer=fallback; });
+  state.layers=remaining;
+  if(state.activeLayer===id) state.activeLayer=fallback;
+  renderLayers();
+  drawAll();
+}
+function addLayer(){
+  const id=Date.now();
+  state.layers.push({id,name:t('addLayerName')+(state.layers.length+1),visible:true,locked:false});
+  state.activeLayer=id;
+  renderLayers();
+}
+function setActiveLayer(id){ state.activeLayer=id; renderLayers(); }
+function toggleLayerVis(id,e){ e.stopPropagation(); const l=state.layers.find(x=>x.id===id); if(l)l.visible=!l.visible; renderLayers(); drawAll(); }
+function toggleLayerLock(id,e){ e.stopPropagation(); const l=state.layers.find(x=>x.id===id); if(l)l.locked=!l.locked; renderLayers(); }
+
+// ============================================================
+// PROPS PANEL
+// ============================================================
+function updateFillType(){
+  const ft = document.getElementById('prop-fill-type').value;
+  const isGrad = ft.startsWith('grad');
+  const isHatch = ft.startsWith('hatch');
+  document.getElementById('fill-color2-row').style.display = isGrad ? '' : 'none';
+  document.getElementById('fill-hatch-row').style.display = isHatch ? '' : 'none';
+  // auto-set alpha to 100 when a fill is chosen
+  if(ft !== 'none' && parseInt(document.getElementById('prop-fill-alpha').value) === 0){
+    document.getElementById('prop-fill-alpha').value = 100;
+    document.getElementById('fill-alpha-val').textContent = '100%';
+  }
+  updateProp();
+}
+
+function updatePropPanel(){
+  const sel=state.selected.map(id=>state.objects.find(o=>o.id===id)).filter(Boolean);
+  const grp=document.getElementById('transform-group');
+  const txtG=document.getElementById('text-props-group');
+  if(sel.length===1){
+    const obj=sel[0];
+    grp.style.display='';
+    const bb=getObjBB(obj);
+    document.getElementById('prop-x').value=Math.round(bb.x);
+    document.getElementById('prop-y').value=Math.round(bb.y);
+    document.getElementById('prop-w').value=Math.round(bb.w);
+    document.getElementById('prop-h').value=Math.round(bb.h);
+    document.getElementById('prop-rot').value=obj.rotation||0;
+    if(obj.type==='text'||obj.type==='label'){
+      txtG.style.display='';
+      document.getElementById('prop-font').value=obj.fontFamily||'Share Tech Mono';
+      document.getElementById('prop-font-size').value=obj.fontSize||14;
+      document.getElementById('prop-bold').checked=!!obj.fontBold;
+    } else txtG.style.display='none';
+    if(obj.strokeColor) document.getElementById('prop-stroke-color').value=obj.strokeColor;
+    if(obj.strokeWidth) document.getElementById('prop-stroke-w').value=obj.strokeWidth;
+    if(obj.strokeStyle) document.getElementById('prop-stroke-style').value=obj.strokeStyle;
+    if(obj.fillColor) document.getElementById('prop-fill-color').value=obj.fillColor;
+    if(obj.fillColor2) document.getElementById('prop-fill-color2').value=obj.fillColor2;
+    const ft = obj.fillType || 'none';
+    document.getElementById('prop-fill-type').value = ft;
+    document.getElementById('fill-color2-row').style.display = ft.startsWith('grad') ? '' : 'none';
+    document.getElementById('fill-hatch-row').style.display = ft.startsWith('hatch') ? '' : 'none';
+    if(obj.hatchSize) document.getElementById('prop-hatch-size').value = obj.hatchSize;
+    if(obj.hatchW) document.getElementById('prop-hatch-w').value = obj.hatchW;
+    const fa=obj.fillAlpha!==undefined?obj.fillAlpha:0;
+    document.getElementById('prop-fill-alpha').value=fa;
+    document.getElementById('fill-alpha-val').textContent=fa+'%';
+  } else {
+    grp.style.display='none'; txtG.style.display='none';
+  }
+}
+
+function updateProp(){
+  state.strokeColor=document.getElementById('prop-stroke-color').value;
+  state.strokeWidth=parseFloat(document.getElementById('prop-stroke-w').value)||2;
+  state.strokeStyle=document.getElementById('prop-stroke-style').value;
+  state.fillColor=document.getElementById('prop-fill-color').value;
+  state.fillColor2=document.getElementById('prop-fill-color2').value||'#7c3aed';
+  state.fillType=document.getElementById('prop-fill-type').value;
+  state.fillAlpha=parseInt(document.getElementById('prop-fill-alpha').value)||0;
+  state.hatchSize=parseInt(document.getElementById('prop-hatch-size').value)||10;
+  state.hatchW=parseFloat(document.getElementById('prop-hatch-w').value)||1;
+  document.getElementById('fill-alpha-val').textContent=state.fillAlpha+'%';
+  state.fontFamily=document.getElementById('prop-font').value;
+  state.fontSize=parseInt(document.getElementById('prop-font-size').value)||14;
+  state.fontBold=document.getElementById('prop-bold').checked;
+
+  state.selected.forEach(id=>{
+    const obj=state.objects.find(o=>o.id===id); if(!obj)return;
+    obj.strokeColor=state.strokeColor;
+    obj.strokeWidth=state.strokeWidth;
+    obj.strokeStyle=state.strokeStyle;
+    obj.fillColor=state.fillColor;
+    obj.fillColor2=state.fillColor2;
+    obj.fillType=state.fillType;
+    obj.fillAlpha=state.fillAlpha;
+    obj.hatchSize=state.hatchSize;
+    obj.hatchW=state.hatchW;
+    obj.fontFamily=state.fontFamily;
+    obj.fontSize=state.fontSize;
+    obj.fontBold=state.fontBold;
+  });
+  drawAll();
+}
+
+function updatePropTransform(){
+  if(state.selected.length!==1)return;
+  const obj=state.objects.find(o=>o.id===state.selected[0]); if(!obj)return;
+  const nx=parseFloat(document.getElementById('prop-x').value)||0;
+  const ny=parseFloat(document.getElementById('prop-y').value)||0;
+  const rot=parseFloat(document.getElementById('prop-rot').value)||0;
+  const bb=getObjBB(obj);
+  moveObj(obj,nx-bb.x,ny-bb.y);
+  obj.rotation=rot;
+  drawAll();
+}
+
+// ============================================================
+// TEXT MODAL
+// ============================================================
+function cancelTextModal(){ document.getElementById('text-modal').classList.remove('visible'); textPending=null; }
+function confirmTextModal(){
+  const text=document.getElementById('text-input').value.trim();
+  if(!text){cancelTextModal();return;}
+  if(textPending){
+    addObject({type:textPending.isLabel?'label':'text',x:textPending.x,y:textPending.y,text,
+      w:text.split('\n').reduce((m,l)=>Math.max(m,l.length*8),0)+32,
+      h:text.split('\n').length*18+24});
+  }
+  document.getElementById('text-input').value='';
+  cancelTextModal();
+}
+
+// ============================================================
+// NOTE MODAL
+// ============================================================
+function cancelNoteModal(){ document.getElementById('note-modal').classList.remove('visible'); notePending=null; }
+function confirmNoteModal(){
+  const title=document.getElementById('note-title-input').value||'NOTE';
+  const body=document.getElementById('note-body-input').value;
+  if(notePending) addObject({type:'note',x:notePending.x,y:notePending.y,title,body,w:160,h:100});
+  document.getElementById('note-title-input').value='';
+  document.getElementById('note-body-input').value='';
+  cancelNoteModal();
+}
+
+// ============================================================
+// CONTEXT MENU
+// ============================================================
+function showCtxMenu(x,y){
+  const m=document.getElementById('ctx-menu');
+  m.style.display='block'; m.style.left=x+'px'; m.style.top=y+'px';
+}
+function closeCtxMenu(){ document.getElementById('ctx-menu').style.display='none'; }
+
+// ============================================================
+// TOGGLE CONTROLS
+// ============================================================
+function toggleGrid(){
+  state.gridVisible=!state.gridVisible;
+  document.getElementById('btn-grid').classList.toggle('active',state.gridVisible);
+  document.getElementById('grid-dot').classList.toggle('on',state.gridVisible);
+  drawAll();
+}
+function toggleSnap(){
+  state.snapEnabled=!state.snapEnabled;
+  document.getElementById('btn-snap').classList.toggle('active',state.snapEnabled);
+  document.getElementById('st-snap').textContent=state.snapEnabled?t('snapOn'):t('snapOff');
+  document.getElementById('st-snap').style.color=state.snapEnabled?'var(--wire-on)':'var(--muted)';
+}
+function toggleRulers(){
+  state.rulersVisible=!state.rulersVisible;
+  document.getElementById('btn-rulers').classList.toggle('active',state.rulersVisible);
+  document.getElementById('ruler-h').style.display=state.rulersVisible?'':'none';
+  document.getElementById('ruler-v').style.display=state.rulersVisible?'':'none';
+  resizeCanvases();
+}
+function toggleProps(){
+  state.propsVisible=!state.propsVisible;
+  document.getElementById('props-panel').classList.toggle('collapsed',!state.propsVisible);
+  document.getElementById('btn-props').classList.toggle('active',state.propsVisible);
+  // Wait for CSS transition (0.2s) then resize canvases so grid fills the full area
+  setTimeout(resizeCanvases, 220);
+}
+
+// ============================================================
+// THEME
+// ============================================================
+function cycleTheme(){
+  themeIdx=(themeIdx+1)%THEMES.length;
+  document.body.dataset.theme=THEMES[themeIdx]==='dark'?'':THEMES[themeIdx];
+  drawAll();
+}
+
+// ============================================================
+// PAGE SIZE
+// ============================================================
+function changePageSize(){
+  const sizes={
+    a6:[397,561], a5:[559,794], a4:[794,1123], a3:[1123,1587],
+    a2:[1587,2245], a1:[2245,3179], a0:[3179,4494],
+    letter:[816,1056], legal:[816,1344], tabloid:[1056,1632],
+    hd:[1280,720], fhd:[1920,1080], '4k':[3840,2160],
+    sq1:[1000,1000], sq2:[2000,2000],
+    ig_post:[1080,1080], ig_story:[1080,1920], fb_cover:[820,312], yt_thumb:[1280,720],
+    a4_tech:[1123,794], a3_tech:[1587,1123]
+  };
+  const sz=document.getElementById('prop-page-size').value;
+  const customRow=document.getElementById('custom-size-row');
+
+  if(sz==='custom'){
+    customRow.style.display='flex';
+    applyCustomSize();
+    return;
+  }
+  customRow.style.display='none';
+
+  const orient=document.getElementById('prop-orient').value;
+  let [w,h]=sizes[sz]||[794,1123];
+  if(orient==='landscape'&&sz!=='hd'&&sz!=='fhd'&&sz!=='4k'&&sz!=='sq1'&&sz!=='sq2'&&sz!=='ig_post'&&sz!=='ig_story'&&sz!=='fb_cover'&&sz!=='yt_thumb'&&sz!=='a4_tech'&&sz!=='a3_tech'){[w,h]=[h,w];}
+  state.pageW=w; state.pageH=h;
+  document.getElementById('doc-info').textContent=`${sz.toUpperCase()} · ${w}×${h}px`;
+  drawAll();
+}
+
+function applyCustomSize(){
+  const w=parseInt(document.getElementById('prop-custom-w').value)||800;
+  const h=parseInt(document.getElementById('prop-custom-h').value)||600;
+  if(w<10||h<10)return;
+  state.pageW=w; state.pageH=h;
+  document.getElementById('doc-info').textContent=`CUSTOM · ${w}×${h}px`;
+  drawAll();
+}
+
+// ============================================================
+// SAVE / LOAD / EXPORT
+// ============================================================
+function newDocument(){
+  if(state.objects.length>0&&!confirm(t('confirmNew')))return;
+  state.objects=[]; state.selected=[]; objId=1;
+  state.undoStack=[]; state.redoStack=[];
+  drawAll();
+  updateStatusBar();
+}
+
+function saveDocument(){
+  const data=JSON.stringify({objects:state.objects,objId,pageW:state.pageW,pageH:state.pageH,layers:state.layers});
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='schematic.json';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+  try{localStorage.setItem('techlab_schematics_autosave',data);}catch(e){}
+}
+
+function loadDocument(){ document.getElementById('open-file-input').click(); }
+function doLoadFile(e){
+  const f=e.target.files[0]; if(!f)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      state.objects=d.objects||[]; objId=d.objId||1;
+      state.pageW=d.pageW||794; state.pageH=d.pageH||1123;
+      if(d.layers)state.layers=d.layers;
+      state.selected=[]; drawAll(); renderLayers();
+    }catch(err){alert('Помилка завантаження файлу');}
+  };
+  reader.readAsText(f); e.target.value='';
+}
+
+function exportPNG(){
+  const scale = 2;
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = state.pageW * scale;
+  tmpCanvas.height = state.pageH * scale;
+  const tc = tmpCanvas.getContext('2d');
+  tc.setTransform(scale, 0, 0, scale, 0, 0);
+
+  const oldZoom = state.zoom, oldPanX = state.panX, oldPanY = state.panY;
+  state.zoom = 1; state.panX = 0; state.panY = 0;
+
+  tc.fillStyle = '#020b14';
+  tc.fillRect(0, 0, state.pageW, state.pageH);
+  const sorted = [...state.objects].sort((a,b)=>(a.z||0)-(b.z||0));
+  sorted.forEach(obj => drawObject(tc, obj, false));
+
+  state.zoom = oldZoom; state.panX = oldPanX; state.panY = oldPanY;
+
+  tmpCanvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'schematic.png';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+  });
+}
+
+function exportSVG(){
+  let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${state.pageW}" height="${state.pageH}" style="background:#020b14">`;
+  state.objects.forEach(obj=>{
+    const sc=obj.strokeColor||'#00d4ff', sw=obj.strokeWidth||2;
+    const fc=obj.fillColor||'none', fa=obj.fillAlpha||0;
+    const fill=fa>0?fc:'none', fillOpacity=fa/100;
+    const dash=obj.strokeStyle==='dashed'?`stroke-dasharray="${sw*6},${sw*4}"`:obj.strokeStyle==='dotted'?`stroke-dasharray="${sw},${sw*3}"`:'';
+    switch(obj.type){
+      case 'line': case 'wire': case 'arrow':
+        svg+=`<line x1="${obj.x}" y1="${obj.y}" x2="${obj.x2}" y2="${obj.y2}" stroke="${sc}" stroke-width="${sw}" ${dash}/>`; break;
+      case 'rect':
+        svg+=`<rect x="${obj.x}" y="${obj.y}" width="${obj.w}" height="${obj.h}" stroke="${sc}" stroke-width="${sw}" fill="${fill}" fill-opacity="${fillOpacity}" ${dash}/>`; break;
+      case 'circle':
+        svg+=`<ellipse cx="${obj.cx}" cy="${obj.cy}" rx="${obj.rx}" ry="${obj.ry}" stroke="${sc}" stroke-width="${sw}" fill="${fill}" fill-opacity="${fillOpacity}"/>`; break;
+      case 'text': case 'label':
+        svg+=`<text x="${obj.x}" y="${obj.y+14}" font-family="${obj.fontFamily||'monospace'}" font-size="${obj.fontSize||14}" fill="${sc}">${(obj.text||'').replace(/</g,'&lt;')}</text>`; break;
+    }
+  });
+  svg+=`</svg>`;
+  const blob=new Blob([svg],{type:'image/svg+xml'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='schematic.svg';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+}
+
+// ============================================================
+// LIBRARY
+// ============================================================
+const LIB=[
+  // ── ПАСИВНІ ────────────────────────────────────────────────
+  {g:'Пасивні',n:'Резистор',
+   s:'<svg viewBox="0 0 40 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="8" x2="8" y2="8"/><rect x="8" y="2" width="24" height="12"/><line x1="32" y1="8" x2="40" y2="8"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+8,x2:x+8,y2:y+8},{type:'rect',x:x+8,y:y+2,w:24,h:12},{type:'line',x:x+32,y:y+8,x2:x+40,y2:y+8}]},
+  {g:'Пасивні',n:'Конденсатор',
+   s:'<svg viewBox="0 0 40 20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="10" x2="16" y2="10"/><line x1="16" y1="2" x2="16" y2="18"/><line x1="24" y1="2" x2="24" y2="18"/><line x1="24" y1="10" x2="40" y2="10"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+10,x2:x+16,y2:y+10},{type:'line',x:x+16,y:y+2,x2:x+16,y2:y+18},{type:'line',x:x+24,y:y+2,x2:x+24,y2:y+18},{type:'line',x:x+24,y:y+10,x2:x+40,y2:y+10}]},
+  {g:'Пасивні',n:'Індуктор',
+   s:'<svg viewBox="0 0 48 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="8" x2="6" y2="8"/><path d="M6 8 Q10 0 14 8 Q18 0 22 8 Q26 0 30 8 Q34 0 38 8 Q42 0 46 8"/><line x1="42" y1="8" x2="48" y2="8"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+8,x2:x+6,y2:y+8},{type:'line',x:x+42,y:y+8,x2:x+48,y2:y+8},
+     {type:'line',x:x+6,y:y+8,x2:x+10,y2:y+2},{type:'line',x:x+10,y:y+2,x2:x+14,y2:y+8},
+     {type:'line',x:x+14,y:y+8,x2:x+18,y2:y+2},{type:'line',x:x+18,y:y+2,x2:x+22,y2:y+8},
+     {type:'line',x:x+22,y:y+8,x2:x+26,y2:y+2},{type:'line',x:x+26,y:y+2,x2:x+30,y2:y+8},
+     {type:'line',x:x+30,y:y+8,x2:x+34,y2:y+2},{type:'line',x:x+34,y:y+2,x2:x+38,y2:y+8},
+     {type:'line',x:x+38,y:y+8,x2:x+42,y2:y+2},{type:'line',x:x+42,y:y+2,x2:x+46,y2:y+8}]},
+  {g:'Пасивні',n:'Земля',
+   s:'<svg viewBox="0 0 30 22" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="15" y1="0" x2="15" y2="7"/><line x1="3" y1="7" x2="27" y2="7"/><line x1="7" y1="12" x2="23" y2="12"/><line x1="11" y1="17" x2="19" y2="17"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+15,y:y,x2:x+15,y2:y+7},{type:'line',x:x+3,y:y+7,x2:x+27,y2:y+7},{type:'line',x:x+7,y:y+12,x2:x+23,y2:y+12},{type:'line',x:x+11,y:y+17,x2:x+19,y2:y+17}]},
+  {g:'Пасивні',n:'+VCC',
+   s:'<svg viewBox="0 0 24 22" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="12" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="0" x2="12" y2="8"/><line x1="8" y1="4" x2="16" y2="4"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+12,y:y+12,x2:x+12,y2:y+22},{type:'line',x:x+2,y:y+12,x2:x+22,y2:y+12},{type:'line',x:x+12,y:y,x2:x+12,y2:y+8},{type:'line',x:x+8,y:y+4,x2:x+16,y2:y+4}]},
+  {g:'Пасивні',n:'Трансформатор',
+   s:'<svg viewBox="0 0 48 28" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="8" x2="8" y2="8"/><line x1="0" y1="20" x2="8" y2="20"/><line x1="8" y1="4" x2="8" y2="24"/><line x1="40" y1="4" x2="40" y2="24"/><line x1="22" y1="4" x2="26" y2="4"/><line x1="22" y1="24" x2="26" y2="24"/><line x1="40" y1="8" x2="48" y2="8"/><line x1="40" y1="20" x2="48" y2="20"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+8,x2:x+8,y2:y+8},{type:'line',x:x,y:y+20,x2:x+8,y2:y+20},
+     {type:'rect',x:x+8,y:y+4,w:14,h:20},{type:'rect',x:x+26,y:y+4,w:14,h:20},
+     {type:'line',x:x+40,y:y+8,x2:x+48,y2:y+8},{type:'line',x:x+40,y:y+20,x2:x+48,y2:y+20}]},
+  {g:'Пасивні',n:'Перемикач',
+   s:'<svg viewBox="0 0 40 18" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="9" x2="10" y2="9"/><circle cx="10" cy="9" r="2"/><line x1="12" y1="9" x2="28" y2="4"/><circle cx="30" cy="9" r="2"/><line x1="30" y1="9" x2="40" y2="9"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+9,x2:x+10,y2:y+9},{type:'circle',cx:x+10,cy:y+9,x:x+10,y:y+9,rx:2,ry:2},
+     {type:'line',x:x+12,y:y+9,x2:x+28,y2:y+4},{type:'circle',cx:x+30,cy:y+9,x:x+30,y:y+9,rx:2,ry:2},
+     {type:'line',x:x+30,y:y+9,x2:x+40,y2:y+9}]},
+
+  // ── АКТИВНІ ────────────────────────────────────────────────
+  {g:'Активні',n:'Діод',
+   s:'<svg viewBox="0 0 40 20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="10" x2="10" y2="10"/><line x1="10" y1="2" x2="28" y2="10"/><line x1="10" y1="18" x2="28" y2="10"/><line x1="10" y1="2" x2="10" y2="18"/><line x1="28" y1="2" x2="28" y2="18"/><line x1="28" y1="10" x2="40" y2="10"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+10,x2:x+10,y2:y+10},{type:'line',x:x+10,y:y+2,x2:x+28,y2:y+10},{type:'line',x:x+10,y:y+18,x2:x+28,y2:y+10},{type:'line',x:x+10,y:y+2,x2:x+10,y2:y+18},{type:'line',x:x+28,y:y+2,x2:x+28,y2:y+18},{type:'line',x:x+28,y:y+10,x2:x+40,y2:y+10}]},
+  {g:'Активні',n:'Зенер',
+   s:'<svg viewBox="0 0 40 22" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="11" x2="10" y2="11"/><line x1="10" y1="3" x2="28" y2="11"/><line x1="10" y1="19" x2="28" y2="11"/><line x1="10" y1="3" x2="10" y2="19"/><line x1="25" y1="1" x2="28" y2="3"/><line x1="28" y1="3" x2="28" y2="19"/><line x1="28" y1="19" x2="31" y2="21"/><line x1="28" y1="11" x2="40" y2="11"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+11,x2:x+10,y2:y+11},{type:'line',x:x+10,y:y+3,x2:x+28,y2:y+11},{type:'line',x:x+10,y:y+19,x2:x+28,y2:y+11},{type:'line',x:x+10,y:y+3,x2:x+10,y2:y+19},{type:'line',x:x+25,y:y+1,x2:x+28,y2:y+3},{type:'line',x:x+28,y:y+3,x2:x+28,y2:y+19},{type:'line',x:x+28,y:y+19,x2:x+31,y2:y+21},{type:'line',x:x+28,y:y+11,x2:x+40,y2:y+11}]},
+  {g:'Активні',n:'LED',
+   s:'<svg viewBox="0 0 44 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="12" x2="10" y2="12"/><line x1="10" y1="4" x2="28" y2="12"/><line x1="10" y1="20" x2="28" y2="12"/><line x1="10" y1="4" x2="10" y2="20"/><line x1="28" y1="4" x2="28" y2="20"/><line x1="28" y1="12" x2="38" y2="12"/><line x1="30" y1="2" x2="36" y2="0"/><line x1="32" y1="6" x2="38" y2="4"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+12,x2:x+10,y2:y+12},{type:'line',x:x+10,y:y+4,x2:x+28,y2:y+12},{type:'line',x:x+10,y:y+20,x2:x+28,y2:y+12},{type:'line',x:x+10,y:y+4,x2:x+10,y2:y+20},{type:'line',x:x+28,y:y+4,x2:x+28,y2:y+20},{type:'line',x:x+28,y:y+12,x2:x+38,y2:y+12},{type:'line',x:x+30,y:y+2,x2:x+36,y2:y},{type:'line',x:x+32,y:y+6,x2:x+38,y2:y+4}]},
+  {g:'Активні',n:'NPN',
+   s:'<svg viewBox="0 0 34 36" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="18" x2="12" y2="18"/><line x1="12" y1="6" x2="12" y2="30"/><line x1="12" y1="12" x2="26" y2="6"/><line x1="26" y1="6" x2="26" y2="0"/><line x1="12" y1="24" x2="26" y2="30"/><line x1="26" y1="30" x2="26" y2="36"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+18,x2:x+12,y2:y+18},{type:'line',x:x+12,y:y+6,x2:x+12,y2:y+30},{type:'line',x:x+12,y:y+12,x2:x+26,y2:y+6},{type:'line',x:x+26,y:y+6,x2:x+26,y2:y},{type:'line',x:x+12,y:y+24,x2:x+26,y2:y+30},{type:'line',x:x+26,y:y+30,x2:x+26,y2:y+36}]},
+  {g:'Активні',n:'PNP',
+   s:'<svg viewBox="0 0 34 36" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="18" x2="12" y2="18"/><line x1="12" y1="6" x2="12" y2="30"/><line x1="26" y1="6" x2="12" y2="12"/><line x1="26" y1="6" x2="26" y2="0"/><line x1="26" y1="30" x2="12" y2="24"/><line x1="26" y1="30" x2="26" y2="36"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+18,x2:x+12,y2:y+18},{type:'line',x:x+12,y:y+6,x2:x+12,y2:y+30},{type:'line',x:x+26,y:y+6,x2:x+12,y2:y+12},{type:'line',x:x+26,y:y+6,x2:x+26,y2:y},{type:'line',x:x+26,y:y+30,x2:x+12,y2:y+24},{type:'line',x:x+26,y:y+30,x2:x+26,y2:y+36}]},
+  {g:'Активні',n:'MOSFET-N',
+   s:'<svg viewBox="0 0 36 40" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="20" x2="8" y2="20"/><line x1="8" y1="10" x2="8" y2="30"/><line x1="10" y1="10" x2="10" y2="30"/><line x1="10" y1="14" x2="24" y2="14"/><line x1="24" y1="14" x2="24" y2="0"/><line x1="10" y1="26" x2="24" y2="26"/><line x1="24" y1="26" x2="24" y2="40"/><line x1="10" y1="20" x2="20" y2="20"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+20,x2:x+8,y2:y+20},{type:'line',x:x+8,y:y+10,x2:x+8,y2:y+30},{type:'line',x:x+10,y:y+10,x2:x+10,y2:y+30},{type:'line',x:x+10,y:y+14,x2:x+24,y2:y+14},{type:'line',x:x+24,y:y+14,x2:x+24,y2:y},{type:'line',x:x+10,y:y+26,x2:x+24,y2:y+26},{type:'line',x:x+24,y:y+26,x2:x+24,y2:y+40},{type:'line',x:x+10,y:y+20,x2:x+20,y2:y+20}]},
+  {g:'Активні',n:'Оп-Ам',
+   s:'<svg viewBox="0 0 44 36" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="4,2 4,34 40,18"/><line x1="0" y1="12" x2="10" y2="12"/><line x1="0" y1="24" x2="10" y2="24"/><line x1="40" y1="18" x2="44" y2="18"/><text x="7" y="15" font-size="7" fill="currentColor">+</text><text x="7" y="27" font-size="7" fill="currentColor">−</text></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+12,x2:x+10,y2:y+12},{type:'line',x:x,y:y+24,x2:x+10,y2:y+24},{type:'line',x:x+40,y:y+18,x2:x+44,y2:y+18},{type:'line',x:x+4,y:y+2,x2:x+4,y2:y+34},{type:'line',x:x+4,y:y+2,x2:x+40,y2:y+18},{type:'line',x:x+4,y:y+34,x2:x+40,y2:y+18},{type:'label',x:x+7,y:y+10,text:'+',w:8,h:8},{type:'label',x:x+7,y:y+22,text:'−',w:8,h:8}]},
+
+  // ── ЛОГІКА ────────────────────────────────────────────────
+  {g:'Логіка',n:'AND',
+   s:'<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="8" x2="10" y2="8"/><line x1="0" y1="20" x2="10" y2="20"/><rect x="10" y="2" width="24" height="24"/><line x1="34" y1="14" x2="40" y2="14"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+8,x2:x+10,y2:y+8},{type:'line',x:x,y:y+20,x2:x+10,y2:y+20},{type:'rect',x:x+10,y:y+2,w:24,h:24},{type:'line',x:x+34,y:y+14,x2:x+40,y2:y+14},{type:'label',x:x+14,y:y+8,text:'AND',w:20,h:14}]},
+  {g:'Логіка',n:'OR',
+   s:'<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="8" x2="10" y2="8"/><line x1="0" y1="20" x2="10" y2="20"/><rect x="10" y="2" width="24" height="24"/><line x1="34" y1="14" x2="40" y2="14"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+8,x2:x+10,y2:y+8},{type:'line',x:x,y:y+20,x2:x+10,y2:y+20},{type:'rect',x:x+10,y:y+2,w:24,h:24},{type:'line',x:x+34,y:y+14,x2:x+40,y2:y+14},{type:'label',x:x+15,y:y+8,text:'OR',w:16,h:14}]},
+  {g:'Логіка',n:'NOT',
+   s:'<svg viewBox="0 0 40 22" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="11" x2="8" y2="11"/><rect x="8" y="2" width="22" height="18"/><line x1="30" y1="11" x2="40" y2="11"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+11,x2:x+8,y2:y+11},{type:'rect',x:x+8,y:y+2,w:22,h:18},{type:'line',x:x+30,y:y+11,x2:x+40,y2:y+11},{type:'label',x:x+12,y:y+5,text:'NOT',w:18,h:12}]},
+  {g:'Логіка',n:'NAND',
+   s:'<svg viewBox="0 0 44 28" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="8" x2="10" y2="8"/><line x1="0" y1="20" x2="10" y2="20"/><rect x="10" y="2" width="24" height="24"/><circle cx="37" cy="14" r="3"/><line x1="40" y1="14" x2="44" y2="14"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+8,x2:x+10,y2:y+8},{type:'line',x:x,y:y+20,x2:x+10,y2:y+20},{type:'rect',x:x+10,y:y+2,w:24,h:24},{type:'circle',cx:x+37,cy:y+14,x:x+37,y:y+14,rx:3,ry:3},{type:'line',x:x+40,y:y+14,x2:x+44,y2:y+14},{type:'label',x:x+11,y:y+8,text:'NAND',w:22,h:14}]},
+  {g:'Логіка',n:'XOR',
+   s:'<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="8" x2="10" y2="8"/><line x1="0" y1="20" x2="10" y2="20"/><rect x="10" y="2" width="24" height="24"/><line x1="34" y1="14" x2="40" y2="14"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+8,x2:x+10,y2:y+8},{type:'line',x:x,y:y+20,x2:x+10,y2:y+20},{type:'rect',x:x+10,y:y+2,w:24,h:24},{type:'line',x:x+34,y:y+14,x2:x+40,y2:y+14},{type:'label',x:x+13,y:y+8,text:'XOR',w:20,h:14}]},
+  {g:'Логіка',n:'D-тригер',
+   s:'<svg viewBox="0 0 44 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="2" width="28" height="36"/><line x1="0" y1="12" x2="8" y2="12"/><line x1="0" y1="28" x2="8" y2="28"/><line x1="36" y1="12" x2="44" y2="12"/><line x1="36" y1="28" x2="44" y2="28"/><line x1="8" y1="26" x2="14" y2="28"/><line x1="14" y1="28" x2="8" y2="30"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x+8,y:y+2,w:28,h:36},{type:'line',x:x,y:y+12,x2:x+8,y2:y+12},{type:'line',x:x,y:y+28,x2:x+8,y2:y+28},{type:'line',x:x+36,y:y+12,x2:x+44,y2:y+12},{type:'line',x:x+36,y:y+28,x2:x+44,y2:y+28},{type:'line',x:x+8,y:y+26,x2:x+14,y2:y+28},{type:'line',x:x+14,y:y+28,x2:x+8,y2:y+30},{type:'label',x:x+12,y:y+8,text:'D',w:8,h:8},{type:'label',x:x+12,y:y+24,text:'CLK',w:16,h:8},{type:'label',x:x+28,y:y+8,text:'Q',w:8,h:8}]},
+
+  // ── СХЕМИ ────────────────────────────────────────────────
+  {g:'Схеми',n:'Блок',
+   s:'<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="32" height="20" rx="2"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y,w:80,h:50}]},
+  {g:'Схеми',n:'IC корпус',
+   s:'<svg viewBox="0 0 40 36" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="10" y="2" width="20" height="32"/><line x1="10" y1="9" x2="4" y2="9"/><line x1="10" y1="18" x2="4" y2="18"/><line x1="10" y1="27" x2="4" y2="27"/><line x1="30" y1="9" x2="36" y2="9"/><line x1="30" y1="18" x2="36" y2="18"/><line x1="30" y1="27" x2="36" y2="27"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x+10,y:y,w:60,h:80},{type:'line',x:x+10,y:y+16,x2:x,y2:y+16},{type:'line',x:x+10,y:y+40,x2:x,y2:y+40},{type:'line',x:x+10,y:y+64,x2:x,y2:y+64},{type:'line',x:x+70,y:y+16,x2:x+80,y2:y+16},{type:'line',x:x+70,y:y+40,x2:x+80,y2:y+40},{type:'line',x:x+70,y:y+64,x2:x+80,y2:y+64}]},
+  {g:'Схеми',n:'Батарея',
+   s:'<svg viewBox="0 0 44 20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="10" x2="12" y2="10"/><line x1="12" y1="4" x2="12" y2="16"/><line x1="16" y1="7" x2="16" y2="13"/><line x1="20" y1="4" x2="20" y2="16"/><line x1="24" y1="7" x2="24" y2="13"/><line x1="28" y1="4" x2="28" y2="16"/><line x1="32" y1="7" x2="32" y2="13"/><line x1="32" y1="10" x2="44" y2="10"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+10,x2:x+12,y2:y+10},{type:'line',x:x+12,y:y+4,x2:x+12,y2:y+16},{type:'line',x:x+16,y:y+7,x2:x+16,y2:y+13},{type:'line',x:x+20,y:y+4,x2:x+20,y2:y+16},{type:'line',x:x+24,y:y+7,x2:x+24,y2:y+13},{type:'line',x:x+28,y:y+4,x2:x+28,y2:y+16},{type:'line',x:x+32,y:y+7,x2:x+32,y2:y+13},{type:'line',x:x+32,y:y+10,x2:x+44,y2:y+10}]},
+  {g:'Схеми',n:'Мікрофон',
+   s:'<svg viewBox="0 0 28 32" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="2" width="12" height="18" rx="6"/><path d="M4 16 Q4 26 14 26 Q24 26 24 16"/><line x1="14" y1="26" x2="14" y2="32"/><line x1="8" y1="32" x2="20" y2="32"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x+8,y:y+2,w:12,h:18},{type:'line',x:x+4,y:y+16,x2:x+4,y2:y+22},{type:'line',x:x+4,y:y+22,x2:x+24,y2:y+22},{type:'line',x:x+24,y:y+16,x2:x+24,y2:y+22},{type:'line',x:x+14,y:y+22,x2:x+14,y2:y+28},{type:'line',x:x+8,y:y+28,x2:x+20,y2:y+28}]},
+  {g:'Схеми',n:'Динамік',
+   s:'<svg viewBox="0 0 36 28" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="10" width="8" height="8"/><polygon points="10,10 10,18 22,24 22,4"/><line x1="26" y1="8" x2="30" y2="4"/><line x1="28" y1="14" x2="34" y2="14"/><line x1="26" y1="20" x2="30" y2="24"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x+2,y:y+10,w:8,h:8},{type:'line',x:x+10,y:y+10,x2:x+22,y2:y+4},{type:'line',x:x+22,y:y+4,x2:x+22,y2:y+24},{type:'line',x:x+22,y:y+24,x2:x+10,y2:y+18},{type:'line',x:x+10,y:y+18,x2:x+10,y2:y+10},{type:'line',x:x+26,y:y+8,x2:x+30,y2:y+4},{type:'line',x:x+28,y:y+14,x2:x+34,y2:y+14},{type:'line',x:x+26,y:y+20,x2:x+30,y2:y+24}]},
+
+  // ── МЕХАНІКА ────────────────────────────────────────────────
+  {g:'Механіка',n:'Болт',
+   s:'<svg viewBox="0 0 24 40" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="4,0 20,0 24,8 0,8"/><rect x="8" y="8" width="8" height="28" rx="4"/><line x1="2" y1="3" x2="22" y2="3"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y,w:24,h:8},{type:'rect',x:x+8,y:y+8,w:8,h:28},{type:'line',x:x,y:y+4,x2:x+24,y2:y+4}]},
+  {g:'Механіка',n:'Шестерня',
+   s:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="20" cy="20" r="12"/><circle cx="20" cy="20" r="4"/><line x1="20" y1="2" x2="20" y2="8"/><line x1="20" y1="32" x2="20" y2="38"/><line x1="2" y1="20" x2="8" y2="20"/><line x1="32" y1="20" x2="38" y2="20"/><line x1="7" y1="7" x2="11" y2="11"/><line x1="29" y1="29" x2="33" y2="33"/><line x1="7" y1="33" x2="11" y2="29"/><line x1="29" y1="11" x2="33" y2="7"/></svg>',
+   f:(x,y)=>[{type:'circle',cx:x+20,cy:y+20,x:x+20,y:y+20,rx:12,ry:12},{type:'circle',cx:x+20,cy:y+20,x:x+20,y:y+20,rx:4,ry:4},{type:'line',x:x+20,y:y+2,x2:x+20,y2:y+8},{type:'line',x:x+20,y:y+32,x2:x+20,y2:y+38},{type:'line',x:x+2,y:y+20,x2:x+8,y2:y+20},{type:'line',x:x+32,y:y+20,x2:x+38,y2:y+20}]},
+  {g:'Механіка',n:'Пружина',
+   s:'<svg viewBox="0 0 48 16" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="8" x2="6" y2="8"/><line x1="6" y1="8" x2="10" y2="2"/><line x1="10" y1="2" x2="14" y2="14"/><line x1="14" y1="14" x2="18" y2="2"/><line x1="18" y1="2" x2="22" y2="14"/><line x1="22" y1="14" x2="26" y2="2"/><line x1="26" y1="2" x2="30" y2="14"/><line x1="30" y1="14" x2="34" y2="2"/><line x1="34" y1="2" x2="38" y2="14"/><line x1="38" y1="14" x2="42" y2="8"/><line x1="42" y1="8" x2="48" y2="8"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+8,x2:x+6,y2:y+8},{type:'line',x:x+6,y:y+8,x2:x+10,y2:y+2},{type:'line',x:x+10,y:y+2,x2:x+14,y2:y+14},{type:'line',x:x+14,y:y+14,x2:x+18,y2:y+2},{type:'line',x:x+18,y:y+2,x2:x+22,y2:y+14},{type:'line',x:x+22,y:y+14,x2:x+26,y2:y+2},{type:'line',x:x+26,y:y+2,x2:x+30,y2:y+14},{type:'line',x:x+30,y:y+14,x2:x+34,y2:y+2},{type:'line',x:x+34,y:y+2,x2:x+38,y2:y+14},{type:'line',x:x+38,y:y+14,x2:x+42,y2:y+8},{type:'line',x:x+42,y:y+8,x2:x+48,y2:y+8}]},
+  {g:'Механіка',n:'Поршень',
+   s:'<svg viewBox="0 0 60 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="0" y="8" width="20" height="8" rx="2"/><rect x="20" y="4" width="20" height="16" rx="2"/><line x1="40" y1="12" x2="60" y2="12"/><line x1="20" y1="4" x2="40" y2="4"/><line x1="20" y1="20" x2="40" y2="20"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y+8,w:20,h:8},{type:'rect',x:x+20,y:y+4,w:20,h:16},{type:'line',x:x+40,y:y+12,x2:x+60,y2:y+12}]},
+  {g:'Механіка',n:'Підшипник',
+   s:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="16" cy="6" r="2"/><circle cx="16" cy="26" r="2"/><circle cx="6" cy="16" r="2"/><circle cx="26" cy="16" r="2"/></svg>',
+   f:(x,y)=>[{type:'circle',cx:x+16,cy:y+16,x:x+16,y:y+16,rx:14,ry:14},{type:'circle',cx:x+16,cy:y+16,x:x+16,y:y+16,rx:6,ry:6},{type:'circle',cx:x+16,cy:y+6,x:x+16,y:y+6,rx:2,ry:2},{type:'circle',cx:x+16,cy:y+26,x:x+16,y:y+26,rx:2,ry:2},{type:'circle',cx:x+6,cy:y+16,x:x+6,y:y+16,rx:2,ry:2},{type:'circle',cx:x+26,cy:y+16,x:x+26,y:y+16,rx:2,ry:2}]},
+  {g:'Механіка',n:'Циліндр',
+   s:'<svg viewBox="0 0 32 44" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="16" cy="8" rx="14" ry="6"/><ellipse cx="16" cy="36" rx="14" ry="6"/><line x1="2" y1="8" x2="2" y2="36"/><line x1="30" y1="8" x2="30" y2="36"/></svg>',
+   f:(x,y)=>[{type:'circle',cx:x+16,cy:y+8,x:x+16,y:y+8,rx:14,ry:6},{type:'circle',cx:x+16,cy:y+36,x:x+16,y:y+36,rx:14,ry:6},{type:'line',x:x+2,y:y+8,x2:x+2,y2:y+36},{type:'line',x:x+30,y:y+8,x2:x+30,y2:y+36}]},
+  {g:'Механіка',n:'Труба',
+   s:'<svg viewBox="0 0 60 20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="4" x2="60" y2="4"/><line x1="0" y1="16" x2="60" y2="16"/><line x1="0" y1="4" x2="0" y2="16"/><line x1="60" y1="4" x2="60" y2="16"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y+4,w:60,h:12}]},
+  {g:'Механіка',n:'Стрілка потоку',
+   s:'<svg viewBox="0 0 48 20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="10" x2="36" y2="10"/><polygon points="36,4 48,10 36,16"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+10,x2:x+36,y2:y+10},{type:'line',x:x+36,y:y+4,x2:x+48,y2:y+10},{type:'line',x:x+48,y:y+10,x2:x+36,y2:y+16},{type:'line',x:x+36,y:y+16,x2:x+36,y2:y+4}]},
+  {g:'Механіка',n:'Клапан',
+   s:'<svg viewBox="0 0 44 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="0" y1="12" x2="10" y2="12"/><line x1="34" y1="12" x2="44" y2="12"/><line x1="10" y1="2" x2="34" y2="12"/><line x1="10" y1="22" x2="34" y2="12"/><line x1="10" y1="2" x2="10" y2="22"/><line x1="22" y1="2" x2="22" y2="12"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+12,x2:x+10,y2:y+12},{type:'line',x:x+34,y:y+12,x2:x+44,y2:y+12},{type:'line',x:x+10,y:y+2,x2:x+34,y2:y+12},{type:'line',x:x+10,y:y+22,x2:x+34,y2:y+12},{type:'line',x:x+10,y:y+2,x2:x+10,y2:y+22},{type:'line',x:x+22,y:y+2,x2:x+22,y2:y+12}]},
+
+  // ── ФЛОУ-ЧАРТ ────────────────────────────────────────────────
+  {g:'Флоу-чарт',n:'Старт/Кінець',
+   s:'<svg viewBox="0 0 60 28" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="56" height="24" rx="12"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y,w:100,h:40},{type:'label',x:x+10,y:y+12,text:'START',w:80,h:20}]},
+  {g:'Флоу-чарт',n:'Процес',
+   s:'<svg viewBox="0 0 56 28" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="52" height="24"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y,w:100,h:50}]},
+  {g:'Флоу-чарт',n:'Рішення',
+   s:'<svg viewBox="0 0 56 32" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="28,2 54,16 28,30 2,16"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+50,y:y,x2:x+100,y2:y+30},{type:'line',x:x+100,y:y+30,x2:x+50,y2:y+60},{type:'line',x:x+50,y:y+60,x2:x,y2:y+30},{type:'line',x:x,y:y+30,x2:x+50,y2:y},{type:'label',x:x+20,y:y+24,text:'?',w:20,h:16}]},
+  {g:'Флоу-чарт',n:'I/O Дані',
+   s:'<svg viewBox="0 0 60 28" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="8,2 58,2 52,26 2,26"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+8,y:y,x2:x+100,y2:y},{type:'line',x:x+100,y:y,x2:x+92,y2:y+40},{type:'line',x:x+92,y:y+40,x2:x,y2:y+40},{type:'line',x:x,y:y+40,x2:x+8,y2:y}]},
+  {g:'Флоу-чарт',n:'База даних',
+   s:'<svg viewBox="0 0 40 36" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="20" cy="8" rx="16" ry="6"/><line x1="4" y1="8" x2="4" y2="28"/><line x1="36" y1="8" x2="36" y2="28"/><ellipse cx="20" cy="28" rx="16" ry="6"/><ellipse cx="20" cy="18" rx="16" ry="6"/></svg>',
+   f:(x,y)=>[{type:'circle',cx:x+20,cy:y+8,x:x+20,y:y+8,rx:16,ry:6},{type:'line',x:x+4,y:y+8,x2:x+4,y2:y+28},{type:'line',x:x+36,y:y+8,x2:x+36,y2:y+28},{type:'circle',cx:x+20,cy:y+28,x:x+20,y:y+28,rx:16,ry:6},{type:'circle',cx:x+20,cy:y+18,x:x+20,y:y+18,rx:16,ry:6}]},
+  {g:'Флоу-чарт',n:'Документ',
+   s:'<svg viewBox="0 0 48 36" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="46" y2="2"/><line x1="2" y1="2" x2="2" y2="28"/><line x1="46" y1="2" x2="46" y2="28"/><path d="M2 28 Q12 22 24 28 Q36 34 46 28"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y,x2:x+80,y2:y},{type:'line',x:x,y:y,x2:x,y2:y+50},{type:'line',x:x+80,y:y,x2:x+80,y2:y+50},{type:'line',x:x,y:y+50,x2:x+20,y2:y+40},{type:'line',x:x+20,y:y+40,x2:x+40,y2:y+56},{type:'line',x:x+40,y:y+56,x2:x+60,y2:y+44},{type:'line',x:x+60,y:y+44,x2:x+80,y2:y+50}]},
+  {g:'Флоу-чарт',n:'З\'єднувач',
+   s:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="14" cy="14" r="12"/></svg>',
+   f:(x,y)=>[{type:'circle',cx:x+14,cy:y+14,x:x+14,y:y+14,rx:20,ry:20}]},
+
+  // ── АРТИ / ДИЗАЙН ────────────────────────────────────────────────
+  {g:'Арт / Дизайн',n:'Зірка 5',
+   s:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="16,2 19.6,12.4 30.5,12.4 21.5,19 24.9,29.5 16,23 7.1,29.5 10.5,19 1.5,12.4 12.4,12.4"/></svg>',
+   f:(x,y)=>{const cx=x+20,cy=y+20,r=20,ri=8,pts=[];for(let i=0;i<10;i++){const a=Math.PI/5*i-Math.PI/2,rad=i%2?ri:r;pts.push({x:cx+Math.cos(a)*rad,y:cy+Math.sin(a)*rad});}const segs=[];for(let i=0;i<pts.length;i++)segs.push({type:'line',x:pts[i].x,y:pts[i].y,x2:pts[(i+1)%pts.length].x,y2:pts[(i+1)%pts.length].y});return segs;}},
+  {g:'Арт / Дизайн',n:'Серце',
+   s:'<svg viewBox="0 0 32 30" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 27 C16 27 2 18 2 9 A7 7 0 0 1 16 7 A7 7 0 0 1 30 9 C30 18 16 27 16 27Z"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+16,y:y+27,x2:x+2,y2:y+12},{type:'line',x:x+2,y:y+12,x2:x+2,y2:y+8},{type:'line',x:x+2,y:y+8,x2:x+8,y2:y+2},{type:'line',x:x+8,y:y+2,x2:x+16,y2:y+8},{type:'line',x:x+16,y:y+8,x2:x+24,y2:y+2},{type:'line',x:x+24,y:y+2,x2:x+30,y2:y+8},{type:'line',x:x+30,y:y+8,x2:x+30,y2:y+12},{type:'line',x:x+30,y:y+12,x2:x+16,y2:y+27}]},
+  {g:'Арт / Дизайн',n:'Хрест',
+   s:'<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="8,0 20,0 20,8 28,8 28,20 20,20 20,28 8,28 8,20 0,20 0,8 8,8"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+10,y:y,x2:x+30,y2:y},{type:'line',x:x+30,y:y,x2:x+30,y2:y+10},{type:'line',x:x+30,y:y+10,x2:x+40,y2:y+10},{type:'line',x:x+40,y:y+10,x2:x+40,y2:y+30},{type:'line',x:x+40,y:y+30,x2:x+30,y2:y+30},{type:'line',x:x+30,y:y+30,x2:x+30,y2:y+40},{type:'line',x:x+30,y:y+40,x2:x+10,y2:y+40},{type:'line',x:x+10,y:y+40,x2:x+10,y2:y+30},{type:'line',x:x+10,y:y+30,x2:x,y2:y+30},{type:'line',x:x,y:y+30,x2:x,y2:y+10},{type:'line',x:x,y:y+10,x2:x+10,y2:y+10},{type:'line',x:x+10,y:y+10,x2:x+10,y2:y}]},
+  {g:'Арт / Дизайн',n:'Блискавка',
+   s:'<svg viewBox="0 0 24 40" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="14,0 2,22 12,22 8,40 22,16 12,16"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+14,y:y,x2:x+2,y2:y+22},{type:'line',x:x+2,y:y+22,x2:x+12,y2:y+22},{type:'line',x:x+12,y:y+22,x2:x+8,y2:y+40},{type:'line',x:x+8,y:y+40,x2:x+22,y2:y+16},{type:'line',x:x+22,y:y+16,x2:x+12,y2:y+16},{type:'line',x:x+12,y:y+16,x2:x+14,y2:y}]},
+  {g:'Арт / Дизайн',n:'Хмара',
+   s:'<svg viewBox="0 0 48 30" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="14" cy="20" r="10"/><circle cx="28" cy="16" r="12"/><circle cx="38" cy="22" r="8"/><rect x="4" y="20" width="40" height="10"/></svg>',
+   f:(x,y)=>[{type:'circle',cx:x+14,cy:y+20,x:x+14,y:y+20,rx:10,ry:10},{type:'circle',cx:x+28,cy:y+16,x:x+28,y:y+16,rx:12,ry:12},{type:'circle',cx:x+40,cy:y+22,x:x+40,y:y+22,rx:8,ry:8},{type:'rect',x:x+4,y:y+20,w:40,h:12}]},
+  {g:'Арт / Дизайн',n:'Щит',
+   s:'<svg viewBox="0 0 32 38" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 2 L30 8 L30 20 C30 30 16 36 16 36 C16 36 2 30 2 20 L2 8 Z"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+16,y:y+2,x2:x+30,y2:y+8},{type:'line',x:x+30,y:y+8,x2:x+30,y2:y+20},{type:'line',x:x+30,y:y+20,x2:x+16,y2:y+34},{type:'line',x:x+16,y:y+34,x2:x+2,y2:y+20},{type:'line',x:x+2,y:y+20,x2:x+2,y2:y+8},{type:'line',x:x+2,y:y+8,x2:x+16,y2:y+2}]},
+  {g:'Арт / Дизайн',n:'Стрілка вліво',
+   s:'<svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="0,12 16,0 16,8 48,8 48,16 16,16 16,24"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+12,x2:x+16,y2:y},{type:'line',x:x+16,y:y,x2:x+16,y2:y+8},{type:'line',x:x+16,y:y+8,x2:x+48,y2:y+8},{type:'line',x:x+48,y:y+8,x2:x+48,y2:y+16},{type:'line',x:x+48,y:y+16,x2:x+16,y2:y+16},{type:'line',x:x+16,y:y+16,x2:x+16,y2:y+24},{type:'line',x:x+16,y:y+24,x2:x,y2:y+12}]},
+  {g:'Арт / Дизайн',n:'Стрілка вправо',
+   s:'<svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="48,12 32,0 32,8 0,8 0,16 32,16 32,24"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+48,y:y+12,x2:x+32,y2:y},{type:'line',x:x+32,y:y,x2:x+32,y2:y+8},{type:'line',x:x+32,y:y+8,x2:x,y2:y+8},{type:'line',x:x,y:y+8,x2:x,y2:y+16},{type:'line',x:x,y:y+16,x2:x+32,y2:y+16},{type:'line',x:x+32,y:y+16,x2:x+32,y2:y+24},{type:'line',x:x+32,y:y+24,x2:x+48,y2:y+12}]},
+  {g:'Арт / Дизайн',n:'Рамка',
+   s:'<svg viewBox="0 0 40 32" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="36" height="28"/><rect x="6" y="6" width="28" height="20"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y,w:80,h:60},{type:'rect',x:x+8,y:y+8,w:64,h:44}]},
+  {g:'Арт / Дизайн',n:'Овал',
+   s:'<svg viewBox="0 0 48 28" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="24" cy="14" rx="22" ry="12"/></svg>',
+   f:(x,y)=>[{type:'circle',cx:x+40,cy:y+20,x:x+40,y:y+20,rx:40,ry:20}]},
+  {g:'Арт / Дизайн',n:'Діамант',
+   s:'<svg viewBox="0 0 36 32" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="18,2 34,12 26,30 10,30 2,12"/></svg>',
+   f:(x,y)=>[{type:'line',x:x+20,y:y,x2:x+40,y2:y+14},{type:'line',x:x+40,y:y+14,x2:x+30,y2:y+36},{type:'line',x:x+30,y:y+36,x2:x+10,y2:y+36},{type:'line',x:x+10,y:y+36,x2:x,y2:y+14},{type:'line',x:x,y:y+14,x2:x+20,y2:y}]},
+
+  // ── АРХІТЕКТУРА ────────────────────────────────────────────────
+  {g:'Архітектура',n:'Стіна',
+   s:'<svg viewBox="0 0 60 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="0" y="0" width="60" height="12"/><line x1="20" y1="0" x2="20" y2="12"/><line x1="40" y1="0" x2="40" y2="12"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y,w:120,h:20},{type:'line',x:x+40,y:y,x2:x+40,y2:y+20},{type:'line',x:x+80,y:y,x2:x+80,y2:y+20}]},
+  {g:'Архітектура',n:'Двері',
+   s:'<svg viewBox="0 0 28 40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="24" height="38"/><line x1="8" y1="22" x2="12" y2="22"/><path d="M2 40 Q2 12 26 12"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y,x2:x,y2:y+60},{type:'line',x:x,y:y+60,x2:x+40,y2:y+60},{type:'line',x:x+40,y:y+60,x2:x+40,y2:y},{type:'line',x:x,y:y,x2:x+40,y2:y},{type:'line',x:x,y:y+60,x2:x+40,y2:y}]},
+  {g:'Архітектура',n:'Вікно',
+   s:'<svg viewBox="0 0 36 28" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="32" height="24"/><line x1="18" y1="2" x2="18" y2="26"/><line x1="2" y1="14" x2="34" y2="14"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y,w:60,h:40},{type:'line',x:x+30,y:y,x2:x+30,y2:y+40},{type:'line',x:x,y:y+20,x2:x+60,y2:y+20}]},
+  {g:'Архітектура',n:'Сходи',
+   s:'<svg viewBox="0 0 48 40" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="0,40 0,30 10,30 10,20 20,20 20,10 30,10 30,0 48,0"/></svg>',
+   f:(x,y)=>[{type:'line',x:x,y:y+60,x2:x,y2:y+40},{type:'line',x:x,y:y+40,x2:x+20,y2:y+40},{type:'line',x:x+20,y:y+40,x2:x+20,y2:y+20},{type:'line',x:x+20,y:y+20,x2:x+40,y2:y+20},{type:'line',x:x+40,y:y+20,x2:x+40,y2:y},{type:'line',x:x+40,y:y,x2:x+60,y2:y}]},
+  {g:'Архітектура',n:'Колона',
+   s:'<svg viewBox="0 0 20 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="0" y="0" width="20" height="4"/><rect x="4" y="4" width="12" height="40"/><rect x="0" y="44" width="20" height="4"/></svg>',
+   f:(x,y)=>[{type:'rect',x:x,y:y,w:20,h:4},{type:'rect',x:x+4,y:y+4,w:12,h:60},{type:'rect',x:x,y:y+64,w:20,h:4}]},
+];
+
+let _lc={};
+function toggleLib(){
+  const p=document.getElementById('lib-panel');
+  const open=p.classList.toggle('open');
+  document.getElementById('btn-lib').classList.toggle('active',open);
+  setTimeout(resizeCanvases, 220);
+}
+function renderLib(){
+  const q=(document.getElementById('lib-search').value||'').toLowerCase();
+  const scr=document.getElementById('lib-scroll');
+  scr.innerHTML='';
+  const groups={};
+  LIB.forEach(c=>{
+    if(q&&!c.n.toLowerCase().includes(q)&&!c.g.toLowerCase().includes(q))return;
+    if(!groups[c.g])groups[c.g]=[];
+    groups[c.g].push(c);
+  });
+  Object.entries(groups).forEach(([gn,items])=>{
+    const h=document.createElement('div');
+    h.className='lib-ghdr';
+    h.innerHTML='<span>'+gn+'</span><span>'+(_lc[gn]?'▸':'▾')+'</span>';
+    h.onclick=()=>{_lc[gn]=!_lc[gn];renderLib();};
+    scr.appendChild(h);
+    if(!_lc[gn]){
+      const gr=document.createElement('div');
+      gr.className='lib-grid';
+      items.forEach(comp=>{
+        const el=document.createElement('div');
+        el.className='lib-item';
+        el.title=comp.n;
+        el.innerHTML=comp.s+'<span>'+comp.n+'</span>';
+        el.onclick=()=>placeLib(comp);
+        gr.appendChild(el);
+      });
+      scr.appendChild(gr);
+    }
+  });
+}
+function placeLib(comp){
+  // Use canvasArea dimensions as fallback in case canvas is mid-animation
+  const rulerSize = state.rulersVisible ? 20 : 0;
+  const cw = (mainCanvas.clientWidth > 10 ? mainCanvas.clientWidth : canvasArea.clientWidth - rulerSize);
+  const ch = (mainCanvas.clientHeight > 10 ? mainCanvas.clientHeight : canvasArea.clientHeight - rulerSize);
+  const wx = snap((cw/2 - state.panX) / state.zoom - 40);
+  const wy = snap((ch/2 - state.panY) / state.zoom - 30);
+  saveUndo();
+  const ids=[];
+  comp.f(wx,wy).forEach(obj=>{
+    obj.id=objId++;
+    obj.z=state.objects.length;
+    obj.layer=state.activeLayer;
+    obj.visible=true;
+    obj.opacity=1;
+    obj.strokeColor=state.strokeColor;
+    obj.strokeWidth=state.strokeWidth;
+    obj.strokeStyle=state.strokeStyle;
+    obj.fillColor=state.fillColor;
+    obj.fillAlpha=state.fillAlpha;
+    obj.fontFamily=state.fontFamily;
+    obj.fontSize=state.fontSize;
+    obj.fontBold=state.fontBold;
+    state.objects.push(obj);
+    ids.push(obj.id);
+  });
+  state.selected=ids;
+  updatePropPanel();
+  drawAll();
+}
+
+// ============================================================
+// COLOR SWATCHES
+// ============================================================
+const PALETTE=['#00d4ff','#00ff88','#7c3aed','#ff3b3b','#ffbe0b','#f97316','#38bdf8','#a78bfa','#22c55e','#e2f4ff','#fff','#000'];
+function buildSwatches(id,isProp){
+  const cont=document.getElementById(id);
+  PALETTE.forEach(c=>{
+    const s=document.createElement('div');
+    s.className='swatch'; s.style.background=c;
+    s.title=c;
+    s.onclick=()=>{
+      if(isProp==='stroke'){ document.getElementById('prop-stroke-color').value=c; state.strokeColor=c; }
+      else { document.getElementById('prop-fill-color').value=c; state.fillColor=c; }
+      updateProp();
+    };
+    cont.appendChild(s);
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  // Initialize canvas references
+  canvasArea = document.getElementById('canvas-area');
+  mainCanvas = document.getElementById('main-canvas');
+  gridCanvas = document.getElementById('grid-canvas');
+  ctx = mainCanvas.getContext('2d');
+  gctx = gridCanvas.getContext('2d');
+
+  // Attach canvas events
+  mainCanvas.addEventListener('mousedown', onDown);
+  mainCanvas.addEventListener('mousemove', onMove);
+  mainCanvas.addEventListener('mouseup', onUp);
+  mainCanvas.addEventListener('dblclick', onDblClick);
+  mainCanvas.addEventListener('wheel', onWheel, {passive:false});
+  mainCanvas.addEventListener('contextmenu', onContextMenu);
+  // Touch support
+  mainCanvas.addEventListener('touchstart', onTouchStart, {passive:false});
+  mainCanvas.addEventListener('touchmove', onTouchMove, {passive:false});
+  mainCanvas.addEventListener('touchend', onTouchEnd, {passive:false});
+  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('click', ()=>{closeCtxMenu();});
+
+  resizeCanvases();
+  buildSwatches('stroke-swatches','stroke');
+  buildSwatches('fill-swatches','fill');
+  renderLayers();
+  renderLib();
+  // Center page
+  setTimeout(()=>{ zoomReset(); },100);
+  // Autosave load
+  try{
+    const saved=localStorage.getItem('techlab_schematics_autosave');
+    if(saved){
+      const d=JSON.parse(saved);
+      if(d.objects&&d.objects.length>0){
+        state.objects=d.objects; objId=d.objId||1;
+        state.pageW=d.pageW||794; state.pageH=d.pageH||1123;
+        if(d.layers)state.layers=d.layers;
+        renderLayers(); drawAll();
+      }
+    }
+  }catch(e){}
+  // Set initial btn states
+  document.getElementById('btn-snap').classList.add('active');
+  document.getElementById('btn-grid').classList.add('active');
+  document.getElementById('btn-rulers').classList.add('active');
+  document.getElementById('btn-props').classList.add('active');
+  document.getElementById('grid-dot').classList.add('on');
+  // Apply default language
+  setTimeout(applyLang, 50);
+});
+</script>
+</body>
+</html>
